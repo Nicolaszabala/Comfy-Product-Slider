@@ -131,10 +131,10 @@ class WC_Product_Slider_Sanitizer {
 	 *
 	 * @since  1.0.0
 	 * @param  string $color Input color.
-	 * @param  string $default Default color if invalid.
+	 * @param  string $default_color Default color if invalid.
 	 * @return string Sanitized hex color.
 	 */
-	public static function sanitize_hex_color( $color, $default = '#ffffff' ) {
+	public static function sanitize_hex_color( $color, $default_color = '#ffffff' ) {
 		// Remove whitespace.
 		$color = trim( $color );
 
@@ -143,7 +143,7 @@ class WC_Product_Slider_Sanitizer {
 			return $color;
 		}
 
-		return $default;
+		return $default_color;
 	}
 
 	/**
@@ -152,16 +152,16 @@ class WC_Product_Slider_Sanitizer {
 	 * Filters array to only positive integers.
 	 *
 	 * @since  1.0.0
-	 * @param  array $array Input array.
+	 * @param  array $input_array Input array.
 	 * @return array Array of positive integers.
 	 */
-	public static function sanitize_array_of_integers( $array ) {
-		if ( ! is_array( $array ) ) {
+	public static function sanitize_array_of_integers( $input_array ) {
+		if ( ! is_array( $input_array ) ) {
 			return array();
 		}
 
 		// Convert all to positive integers (negatives become 0) and filter out zeros.
-		$sanitized = array_map( array( __CLASS__, 'sanitize_integer' ), $array );
+		$sanitized = array_map( array( __CLASS__, 'sanitize_integer' ), $input_array );
 		$sanitized = array_filter( $sanitized );
 
 		// Re-index array.
