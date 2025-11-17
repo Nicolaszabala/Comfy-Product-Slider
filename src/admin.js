@@ -8,6 +8,7 @@
 
 import { render } from '@wordpress/element';
 import ProductSelector from './components/ProductSelector';
+import CSSEditor from './components/CSSEditor';
 import './admin.css';
 
 /**
@@ -97,6 +98,31 @@ document.addEventListener( 'DOMContentLoaded', () => {
 				onChange={ handleChange }
 			/>,
 			selectorRoot
+		);
+	}
+
+	// Initialize CSS Editor
+	const cssEditorRoot = document.getElementById( 'wc-ps-css-editor' );
+
+	if ( cssEditorRoot ) {
+		// Get hidden input for saving CSS
+		const cssInput = document.getElementById( 'wc_ps_custom_css' );
+		const initialCSS = cssInput ? cssInput.value : '';
+
+		// Handle CSS changes
+		const handleCSSChange = ( newCSS ) => {
+			if ( cssInput ) {
+				cssInput.value = newCSS;
+			}
+		};
+
+		// Render the CSS Editor component
+		render(
+			<CSSEditor
+				initialValue={ initialCSS }
+				onChange={ handleCSSChange }
+			/>,
+			cssEditorRoot
 		);
 	}
 } );

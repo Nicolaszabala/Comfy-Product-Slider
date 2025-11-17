@@ -164,6 +164,15 @@ class WC_Product_Slider_Admin {
 			'side',
 			'high'
 		);
+
+		add_meta_box(
+			'wc_product_slider_custom_css',
+			__( 'Custom CSS', 'woocommerce-product-slider' ),
+			array( $this, 'render_custom_css_meta_box' ),
+			'wc_product_slider',
+			'normal',
+			'low'
+		);
 	}
 
 	/**
@@ -297,6 +306,24 @@ class WC_Product_Slider_Admin {
 	}
 
 	/**
+	 * Render custom CSS meta box.
+	 *
+	 * @since 1.0.0
+	 * @param \WP_Post $post Current post object.
+	 */
+	public function render_custom_css_meta_box( $post ) {
+		wp_nonce_field( 'wc_product_slider_save_custom_css', 'wc_product_slider_custom_css_nonce' );
+
+		$custom_css = get_post_meta( $post->ID, '_wc_ps_custom_css', true );
+		if ( ! is_string( $custom_css ) ) {
+			$custom_css = '';
+		}
+
+		echo '<input type="hidden" name="wc_ps_custom_css" id="wc_ps_custom_css" value="' . esc_attr( $custom_css ) . '" />';
+		echo '<div id="wc-ps-css-editor"></div>';
+	}
+
+	/**
 	 * Save meta box data.
 	 *
 	 * @since 1.0.0
@@ -357,6 +384,16 @@ class WC_Product_Slider_Admin {
 			if ( isset( $_POST['wc_ps_speed'] ) ) {
 				$speed = absint( $_POST['wc_ps_speed'] );
 				update_post_meta( $post_id, '_wc_ps_speed', $speed );
+			}
+		}
+
+		// Save custom CSS.
+		if ( isset( $_POST['wc_product_slider_custom_css_nonce'] ) &&
+			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wc_product_slider_custom_css_nonce'] ) ), 'wc_product_slider_save_custom_css' ) ) {
+
+			if ( isset( $_POST['wc_ps_custom_css'] ) ) {
+				$custom_css = wp_strip_all_tags( wp_unslash( $_POST['wc_ps_custom_css'] ) );
+				update_post_meta( $post_id, '_wc_ps_custom_css', $custom_css );
 			}
 		}
 	}
