@@ -197,3 +197,55 @@
 	padding: 4px 8px;
 	font-size: 12px;
 }
+
+/* Shortcode Meta Box */
+.wc-ps-shortcode-container {
+	margin: 0;
+}
+
+.wc-ps-shortcode-container .description {
+	margin: 0 0 10px 0;
+	font-size: 13px;
+	color: #646970;
+}
+
+.wc-ps-shortcode-wrapper {
+	display: flex;
+	gap: 8px;
+	align-items: stretch;
+}
+
+.wc-ps-shortcode-input {
+	flex: 1;
+	font-family: monospace;
+	font-size: 13px;
+	padding: 8px 12px;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	color: #2c3338;
+	cursor: pointer;
+}
+
+.wc-ps-shortcode-input:focus {
+	background: #fff;
+	border-color: #2271b1;
+	outline: 2px solid transparent;
+	box-shadow: 0 0 0 1px #2271b1;
+}
+
+.wc-ps-copy-shortcode {
+	flex-shrink: 0;
+	white-space: nowrap;
+}
+
+.wc-ps-copy-shortcode:disabled {
+	opacity: 0.7;
+	cursor: not-allowed;
+}
+
+.wc-ps-copy-feedback {
+	font-size: 13px;
+	font-weight: 500;
+	margin: 8px 0 0 0;
+}

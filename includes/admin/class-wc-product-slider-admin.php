@@ -155,6 +155,15 @@ class WC_Product_Slider_Admin {
 			'side',
 			'default'
 		);
+
+		add_meta_box(
+			'wc_product_slider_shortcode',
+			__( 'Shortcode', 'woocommerce-product-slider' ),
+			array( $this, 'render_shortcode_meta_box' ),
+			'wc_product_slider',
+			'side',
+			'high'
+		);
 	}
 
 	/**
@@ -241,6 +250,49 @@ class WC_Product_Slider_Admin {
 			<label for="wc_ps_speed"><?php esc_html_e( 'Autoplay Speed (ms):', 'woocommerce-product-slider' ); ?></label><br>
 			<input type="number" name="wc_ps_speed" id="wc_ps_speed" value="<?php echo esc_attr( $speed ); ?>" min="1000" max="10000" step="100" />
 		</p>
+		<?php
+	}
+
+	/**
+	 * Render shortcode meta box.
+	 *
+	 * @since 1.0.0
+	 * @param \WP_Post $post Current post object.
+	 */
+	public function render_shortcode_meta_box( $post ) {
+		// Only show shortcode for published sliders.
+		if ( 'publish' !== $post->post_status ) {
+			echo '<p class="description">' . esc_html__( 'Publish this slider to generate a shortcode.', 'woocommerce-product-slider' ) . '</p>';
+			return;
+		}
+
+		$shortcode = '[wc_product_slider id="' . $post->ID . '"]';
+		?>
+		<div class="wc-ps-shortcode-container">
+			<p class="description">
+				<?php esc_html_e( 'Copy and paste this shortcode into any post or page:', 'woocommerce-product-slider' ); ?>
+			</p>
+			<div class="wc-ps-shortcode-wrapper">
+				<input
+					type="text"
+					readonly
+					value="<?php echo esc_attr( $shortcode ); ?>"
+					class="wc-ps-shortcode-input"
+					id="wc-ps-shortcode-input"
+					onclick="this.select();"
+				/>
+				<button
+					type="button"
+					class="button button-primary wc-ps-copy-shortcode"
+					data-shortcode="<?php echo esc_attr( $shortcode ); ?>"
+				>
+					<?php esc_html_e( 'Copy', 'woocommerce-product-slider' ); ?>
+				</button>
+			</div>
+			<p class="wc-ps-copy-feedback" style="display:none; color: #46b450; margin-top: 8px;">
+				<?php esc_html_e( 'Shortcode copied to clipboard!', 'woocommerce-product-slider' ); ?>
+			</p>
+		</div>
 		<?php
 	}
 
