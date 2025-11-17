@@ -109,4 +109,26 @@ class Test_WC_Product_Slider extends PolyfillTestCase {
 			'Plugin should have run method'
 		);
 	}
+
+	/**
+	 * Test get_cpt method.
+	 */
+	public function test_get_cpt() {
+		$cpt = $this->plugin->get_cpt();
+
+		$this->assertInstanceOf(
+			'WC_Product_Slider\Core\WC_Product_Slider_CPT',
+			$cpt,
+			'CPT should be instance of WC_Product_Slider_CPT'
+		);
+	}
+
+	/**
+	 * Test CPT is created during construction.
+	 */
+	public function test_cpt_is_created() {
+		$cpt = $this->plugin->get_cpt();
+
+		$this->assertNotNull( $cpt, 'CPT should not be null' );
+	}
 }

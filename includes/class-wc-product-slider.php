@@ -53,6 +53,15 @@ class WC_Product_Slider {
 	protected $version;
 
 	/**
+	 * The custom post type handler.
+	 *
+	 * @since  1.0.0
+	 * @access protected
+	 * @var    Core\WC_Product_Slider_CPT $cpt Custom post type handler.
+	 */
+	protected $cpt;
+
+	/**
 	 * Define the core functionality of the plugin.
 	 *
 	 * Set the plugin name and the plugin version that can be used throughout the plugin.
@@ -67,6 +76,7 @@ class WC_Product_Slider {
 
 		$this->load_dependencies();
 		$this->set_locale();
+		$this->register_post_type();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 	}
@@ -99,6 +109,17 @@ class WC_Product_Slider {
 	 */
 	private function set_locale() {
 		$this->loader->add_action( 'init', $this, 'load_plugin_textdomain' );
+	}
+
+	/**
+	 * Register the custom post type for sliders.
+	 *
+	 * @since  1.0.0
+	 * @access private
+	 */
+	private function register_post_type() {
+		$this->cpt = new Core\WC_Product_Slider_CPT();
+		$this->loader->add_action( 'init', $this->cpt, 'register' );
 	}
 
 	/**
@@ -176,5 +197,15 @@ class WC_Product_Slider {
 	 */
 	public function get_version() {
 		return $this->version;
+	}
+
+	/**
+	 * Get the custom post type handler.
+	 *
+	 * @since  1.0.0
+	 * @return Core\WC_Product_Slider_CPT The CPT handler.
+	 */
+	public function get_cpt() {
+		return $this->cpt;
 	}
 }
