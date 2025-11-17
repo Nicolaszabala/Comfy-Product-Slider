@@ -258,9 +258,9 @@ GNU General Public License for more details.
 
 ## 👤 Author
 
-**Your Name**
-- Website: [https://example.com](https://example.com)
-- GitHub: [@yourusername](https://github.com/yourusername)
+**Nicolás Zabla**
+- Website: [https://nicolaszabala.com](https://nicolaszabala.com)
+- GitHub: [@Nicolaszabala](https://github.com/Nicolaszabala)
 
 ## 🙏 Acknowledgments
 
@@ -268,7 +268,6 @@ GNU General Public License for more details.
 - [WooCommerce](https://woocommerce.com/)
 - [Swiper.js](https://swiperjs.com/)
 - [CodeMirror](https://codemirror.net/)
-- All contributors
 
 ## 📝 Changelog
 
