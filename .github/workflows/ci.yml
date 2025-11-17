@@ -7,9 +7,20 @@ on:
     branches: [ main, develop ]
 
 jobs:
+  conflict-check:
+    name: Conflict Prevention Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run conflict prevention audit
+        run: bash bin/check-conflicts.sh
+
   phpcs:
     name: PHPCS
     runs-on: ubuntu-latest
+    needs: conflict-check
 
     steps:
       - uses: actions/checkout@v3
