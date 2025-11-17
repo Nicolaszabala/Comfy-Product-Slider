@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<ruleset name="WooCommerce Product Slider">
+    <description>WordPress Coding Standards for WooCommerce Product Slider</description>
+
+    <!-- What to scan -->
+    <file>.</file>
+
+    <!-- Exclude paths -->
+    <exclude-pattern>/vendor/*</exclude-pattern>
+    <exclude-pattern>/node_modules/*</exclude-pattern>
+    <exclude-pattern>/build/*</exclude-pattern>
+    <exclude-pattern>/tests/*</exclude-pattern>
+    <exclude-pattern>/assets/*</exclude-pattern>
+    <exclude-pattern>/languages/*</exclude-pattern>
+
+    <!-- Show progress and sniff codes -->
+    <arg value="ps"/>
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+    <arg name="parallel" value="8"/>
+
+    <!-- Rules: WordPress Core -->
+    <rule ref="WordPress-Core">
+        <!-- Allow short array syntax -->
+        <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+    </rule>
+
+    <!-- Rules: WordPress Extra -->
+    <rule ref="WordPress-Extra">
+        <!-- Allow short array syntax -->
+        <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+    </rule>
+
+    <!-- Rules: WordPress Docs -->
+    <rule ref="WordPress-Docs"/>
+
+    <!-- WordPress version -->
+    <config name="minimum_supported_wp_version" value="6.2"/>
+
+    <!-- Text domain check -->
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="woocommerce-product-slider"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Prefixing -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="wc_product_slider"/>
+                <element value="WC_Product_Slider"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- File name checks -->
+    <rule ref="WordPress.Files.FileName">
+        <properties>
+            <property name="strict_class_file_names" value="false"/>
+        </properties>
+    </rule>
+</ruleset>

@@ -1,0 +1,53 @@
+# WordPress
+*.log
+.htaccess
+
+# Composer
+/vendor/
+composer.lock
+
+# NPM
+/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build
+/build/
+*.map
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# Testing
+/coverage/
+/.phpunit.cache/
+.phpunit.result.cache
+/tests/wordpress/
+/tests/tmp/
+
+# Environment
+.env
+.env.local
+.env.testing
+/.wp-env.json
+
+# Production
+*.zip
+!assets/**/*.zip
+
+# Temporary
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+# PHPStan
+/phpstan.neon
+/.phpstan.cache/

@@ -1,0 +1,17 @@
+parameters:
+    level: 8
+    paths:
+        - includes/
+    bootstrapFiles:
+        - woocommerce-product-slider.php
+    excludePaths:
+        - includes/admin/partials/*
+        - includes/public/partials/*
+    ignoreErrors:
+        # WordPress and WooCommerce dynamic properties
+        - '#Access to an undefined property#'
+        # Allow dynamic property access on WP objects
+        - '#Accessing .+ property .+ on .+ always exists and is not nullable#'
+    scanDirectories:
+        - vendor/php-stubs/wordpress-stubs
+        - vendor/php-stubs/woocommerce-stubs
