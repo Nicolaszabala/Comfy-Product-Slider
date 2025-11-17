@@ -106,7 +106,8 @@ class WC_Product_Slider_Sanitizer {
 	 * @return int Positive integer or 0.
 	 */
 	public static function sanitize_integer( $value ) {
-		return absint( $value );
+		$int = intval( $value );
+		return max( 0, $int );
 	}
 
 	/**
@@ -159,8 +160,8 @@ class WC_Product_Slider_Sanitizer {
 			return array();
 		}
 
-		// Convert all to integers and filter out negatives/zeros.
-		$sanitized = array_map( 'absint', $array );
+		// Convert all to positive integers (negatives become 0) and filter out zeros.
+		$sanitized = array_map( array( __CLASS__, 'sanitize_integer' ), $array );
 		$sanitized = array_filter( $sanitized );
 
 		// Re-index array.
@@ -204,19 +205,19 @@ class WC_Product_Slider_Sanitizer {
 	 */
 	public static function sanitize_slider_config( $config ) {
 		$defaults = array(
-			'title'           => '',
-			'description'     => '',
-			'slides_visible'  => 3,
-			'autoplay'        => false,
-			'speed'           => 300,
-			'bg_color'        => '#ffffff',
-			'product_ids'     => array(),
-			'link_url'        => '',
-			'custom_css'      => '',
-			'loop'            => true,
-			'navigation'      => true,
-			'pagination'      => true,
-			'lazy_loading'    => true,
+			'title'            => '',
+			'description'      => '',
+			'slides_visible'   => 3,
+			'autoplay'         => false,
+			'speed'            => 300,
+			'bg_color'         => '#ffffff',
+			'product_ids'      => array(),
+			'link_url'         => '',
+			'custom_css'       => '',
+			'loop'             => true,
+			'navigation'       => true,
+			'pagination'       => true,
+			'lazy_loading'     => true,
 			'transition_speed' => 300,
 		);
 

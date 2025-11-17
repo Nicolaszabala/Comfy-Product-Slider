@@ -144,7 +144,7 @@ class WC_Product_Slider {
 	 */
 	private function define_admin_hooks() {
 		// Admin hooks will be added here as we develop.
-		// Example: $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		// Example: $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' ).
 	}
 
 	/**
@@ -156,7 +156,7 @@ class WC_Product_Slider {
 	 */
 	private function define_public_hooks() {
 		// Public hooks will be added here as we develop.
-		// Example: $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+		// Example: $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' ).
 	}
 
 	/**

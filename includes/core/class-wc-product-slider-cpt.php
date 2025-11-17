@@ -96,30 +96,30 @@ class WC_Product_Slider_CPT {
 		$labels = $this->get_labels();
 
 		$args = array(
-			'label'               => __( 'Product Slider', 'woocommerce-product-slider' ),
-			'description'         => __( 'WooCommerce Product Sliders', 'woocommerce-product-slider' ),
-			'labels'              => $labels,
-			'supports'            => array( 'title' ),
-			'taxonomies'          => array(),
-			'hierarchical'        => false,
-			'public'              => false,
-			'show_ui'             => true,
-			'show_in_menu'        => true,
-			'menu_position'       => 56, // Below WooCommerce (55).
-			'menu_icon'           => 'dashicons-slides',
-			'show_in_admin_bar'   => true,
-			'show_in_nav_menus'   => false,
-			'can_export'          => true,
-			'has_archive'         => false,
-			'exclude_from_search' => true,
-			'publicly_queryable'  => false,
-			'rewrite'             => array(
+			'label'                 => __( 'Product Slider', 'woocommerce-product-slider' ),
+			'description'           => __( 'WooCommerce Product Sliders', 'woocommerce-product-slider' ),
+			'labels'                => $labels,
+			'supports'              => array( 'title' ),
+			'taxonomies'            => array(),
+			'hierarchical'          => false,
+			'public'                => false,
+			'show_ui'               => true,
+			'show_in_menu'          => true,
+			'menu_position'         => 56, // Below WooCommerce (55).
+			'menu_icon'             => 'dashicons-slides',
+			'show_in_admin_bar'     => true,
+			'show_in_nav_menus'     => false,
+			'can_export'            => true,
+			'has_archive'           => false,
+			'exclude_from_search'   => true,
+			'publicly_queryable'    => false,
+			'rewrite'               => array(
 				'slug'       => 'product-slider',
 				'with_front' => false,
 			),
-			'capability_type'     => 'post',
-			'show_in_rest'        => true,
-			'rest_base'           => 'product-sliders',
+			'capability_type'       => 'post',
+			'show_in_rest'          => true,
+			'rest_base'             => 'product-sliders',
 			'rest_controller_class' => 'WP_REST_Posts_Controller',
 		);
 

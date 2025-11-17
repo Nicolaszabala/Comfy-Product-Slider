@@ -24,14 +24,14 @@
         "php-stubs/woocommerce-stubs": "^8.2"
     },
     "autoload": {
-        "psr-4": {
-            "WC_Product_Slider\\": "includes/"
-        }
+        "classmap": [
+            "includes/"
+        ]
     },
     "autoload-dev": {
-        "psr-4": {
-            "WC_Product_Slider\\Tests\\": "tests/"
-        }
+        "classmap": [
+            "tests/"
+        ]
     },
     "scripts": {
         "phpcs": "phpcs --standard=phpcs.xml.dist",

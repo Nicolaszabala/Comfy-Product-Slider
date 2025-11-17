@@ -67,9 +67,20 @@ if ( getenv( 'WP_TESTS_DIR' ) ) {
     echo "Running tests without WordPress Test Library (unit tests only)\n";
     echo "To run integration tests, set WP_TESTS_DIR environment variable\n";
 
-    // Mock WordPress functions for unit tests if needed.
+    // Define WordPress constants.
+    if ( ! defined( 'WPINC' ) ) {
+        define( 'WPINC', 'wp-includes' );
+    }
+
+    // Mock WordPress functions for unit tests.
     if ( ! function_exists( '__' ) ) {
         function __( $text, $domain = 'default' ) {
+            return $text;
+        }
+    }
+
+    if ( ! function_exists( '_x' ) ) {
+        function _x( $text, $context, $domain = 'default' ) {
             return $text;
         }
     }
@@ -98,9 +109,154 @@ if ( getenv( 'WP_TESTS_DIR' ) ) {
         }
     }
 
+    if ( ! function_exists( 'esc_attr__' ) ) {
+        function esc_attr__( $text, $domain = 'default' ) {
+            return htmlspecialchars( $text, ENT_QUOTES, 'UTF-8' );
+        }
+    }
+
     if ( ! function_exists( 'esc_url' ) ) {
         function esc_url( $url ) {
             return htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
         }
     }
+
+    if ( ! function_exists( 'esc_url_raw' ) ) {
+        function esc_url_raw( $url ) {
+            return filter_var( $url, FILTER_SANITIZE_URL );
+        }
+    }
+
+    if ( ! function_exists( 'plugin_dir_path' ) ) {
+        function plugin_dir_path( $file ) {
+            return dirname( $file ) . '/';
+        }
+    }
+
+    if ( ! function_exists( 'plugin_dir_url' ) ) {
+        function plugin_dir_url( $file ) {
+            return 'http://example.com/wp-content/plugins/' . basename( dirname( $file ) ) . '/';
+        }
+    }
+
+    if ( ! function_exists( 'plugin_basename' ) ) {
+        function plugin_basename( $file ) {
+            return basename( dirname( $file ) ) . '/' . basename( $file );
+        }
+    }
+
+    if ( ! function_exists( 'register_activation_hook' ) ) {
+        function register_activation_hook( $file, $callback ) {
+            // Mock for unit tests.
+        }
+    }
+
+    if ( ! function_exists( 'register_deactivation_hook' ) ) {
+        function register_deactivation_hook( $file, $callback ) {
+            // Mock for unit tests.
+        }
+    }
+
+    if ( ! function_exists( 'apply_filters' ) ) {
+        function apply_filters( $tag, $value ) {
+            return $value;
+        }
+    }
+
+    if ( ! function_exists( 'get_option' ) ) {
+        function get_option( $option, $default = false ) {
+            // Return empty array for active_plugins.
+            if ( 'active_plugins' === $option ) {
+                return array();
+            }
+            return $default;
+        }
+    }
+
+    if ( ! function_exists( 'add_action' ) ) {
+        function add_action( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
+            // Mock for unit tests.
+        }
+    }
+
+    if ( ! function_exists( 'add_filter' ) ) {
+        function add_filter( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
+            // Mock for unit tests.
+        }
+    }
+
+    if ( ! function_exists( 'sanitize_text_field' ) ) {
+        function sanitize_text_field( $str ) {
+            $filtered = wp_check_invalid_utf8( $str );
+            // Remove script tags and their content.
+            $filtered = preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $filtered );
+            // Strip remaining tags.
+            $filtered = strip_tags( $filtered );
+            // Convert special characters.
+            $filtered = htmlspecialchars( $filtered, ENT_QUOTES, 'UTF-8', false );
+            $filtered = trim( $filtered );
+            return $filtered;
+        }
+    }
+
+    if ( ! function_exists( 'wp_check_invalid_utf8' ) ) {
+        function wp_check_invalid_utf8( $string ) {
+            // Simplified version for unit tests.
+            return $string;
+        }
+    }
+
+    if ( ! function_exists( 'wp_kses' ) ) {
+        function wp_kses( $string, $allowed_html ) {
+            if ( empty( $allowed_html ) ) {
+                return strip_tags( $string );
+            }
+            // Simplified - just keep allowed tags.
+            $allowed_tags = array_keys( $allowed_html );
+            $allowed = '<' . implode( '><', $allowed_tags ) . '>';
+            return strip_tags( $string, $allowed );
+        }
+    }
+
+    if ( ! function_exists( 'wp_kses_post' ) ) {
+        function wp_kses_post( $data ) {
+            return strip_tags( $data );
+        }
+    }
+
+    if ( ! function_exists( 'wp_parse_args' ) ) {
+        function wp_parse_args( $args, $defaults = array() ) {
+            if ( is_array( $args ) ) {
+                return array_merge( $defaults, $args );
+            }
+            return $defaults;
+        }
+    }
+
+    if ( ! function_exists( 'rest_sanitize_boolean' ) ) {
+        function rest_sanitize_boolean( $value ) {
+            return filter_var( $value, FILTER_VALIDATE_BOOLEAN );
+        }
+    }
+
+    if ( ! function_exists( 'wp_strip_all_tags' ) ) {
+        function wp_strip_all_tags( $string ) {
+            return strip_tags( $string );
+        }
+    }
+
+    if ( ! function_exists( 'absint' ) ) {
+        function absint( $maybeint ) {
+            return abs( intval( $maybeint ) );
+        }
+    }
+
+    if ( ! function_exists( 'wp_max_upload_size' ) ) {
+        function wp_max_upload_size() {
+            return 10485760; // 10MB default for tests.
+        }
+    }
+
+    // Load the plugin file (which triggers autoloader).
+    require_once WC_PRODUCT_SLIDER_PLUGIN_FILE;
 }

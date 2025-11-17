@@ -89,16 +89,16 @@ class WC_Product_Slider_Activator {
 	 */
 	private static function set_default_options() {
 		$defaults = array(
-			'default_slides_visible'    => 3,
-			'default_autoplay'          => false,
-			'default_autoplay_speed'    => 3000,
-			'default_transition_speed'  => 300,
-			'default_loop'              => true,
-			'default_navigation'        => true,
-			'default_pagination'        => true,
-			'default_lazy_loading'      => true,
-			'enable_cache'              => true,
-			'cache_expiration'          => 3600, // 1 hour.
+			'default_slides_visible'   => 3,
+			'default_autoplay'         => false,
+			'default_autoplay_speed'   => 3000,
+			'default_transition_speed' => 300,
+			'default_loop'             => true,
+			'default_navigation'       => true,
+			'default_pagination'       => true,
+			'default_lazy_loading'     => true,
+			'enable_cache'             => true,
+			'cache_expiration'         => 3600, // 1 hour.
 		);
 
 		foreach ( $defaults as $key => $value ) {
@@ -122,20 +122,20 @@ class WC_Product_Slider_Activator {
 		);
 
 		$args = array(
-			'labels'              => $labels,
-			'public'              => false,
-			'publicly_queryable'  => false,
-			'show_ui'             => true,
-			'show_in_menu'        => true,
-			'query_var'           => true,
-			'rewrite'             => array( 'slug' => 'product-slider' ),
-			'capability_type'     => 'post',
-			'has_archive'         => false,
-			'hierarchical'        => false,
-			'menu_position'       => 56, // Below WooCommerce.
-			'menu_icon'           => 'dashicons-slides',
-			'supports'            => array( 'title' ),
-			'show_in_rest'        => true,
+			'labels'             => $labels,
+			'public'             => false,
+			'publicly_queryable' => false,
+			'show_ui'            => true,
+			'show_in_menu'       => true,
+			'query_var'          => true,
+			'rewrite'            => array( 'slug' => 'product-slider' ),
+			'capability_type'    => 'post',
+			'has_archive'        => false,
+			'hierarchical'       => false,
+			'menu_position'      => 56, // Below WooCommerce.
+			'menu_icon'          => 'dashicons-slides',
+			'supports'           => array( 'title' ),
+			'show_in_rest'       => true,
 		);
 
 		register_post_type( 'wc_product_slider', $args );
