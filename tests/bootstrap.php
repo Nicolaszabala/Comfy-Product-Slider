@@ -257,6 +257,73 @@ if ( getenv( 'WP_TESTS_DIR' ) ) {
         }
     }
 
+    if ( ! function_exists( 'get_current_screen' ) ) {
+        function get_current_screen() {
+            return null; // No screen in unit tests.
+        }
+    }
+
+    if ( ! function_exists( 'add_meta_box' ) ) {
+        function add_meta_box( $id, $title, $callback, $screen, $context = 'advanced', $priority = 'default', $callback_args = null ) {
+            // Mock for unit tests.
+        }
+    }
+
+    if ( ! function_exists( 'wp_verify_nonce' ) ) {
+        function wp_verify_nonce( $nonce, $action ) {
+            return true; // Always true for unit tests.
+        }
+    }
+
+    if ( ! function_exists( 'current_user_can' ) ) {
+        function current_user_can( $capability, ...$args ) {
+            return true; // Always true for unit tests.
+        }
+    }
+
+    if ( ! function_exists( 'wp_unslash' ) ) {
+        function wp_unslash( $value ) {
+            return stripslashes_deep( $value );
+        }
+    }
+
+    if ( ! function_exists( 'stripslashes_deep' ) ) {
+        function stripslashes_deep( $value ) {
+            return is_array( $value ) ? array_map( 'stripslashes_deep', $value ) : stripslashes( $value );
+        }
+    }
+
+    if ( ! function_exists( 'sanitize_hex_color' ) ) {
+        function sanitize_hex_color( $color ) {
+            if ( '' === $color ) {
+                return '';
+            }
+            if ( preg_match( '|^#([A-Fa-f0-9]{3}){1,2}$|', $color ) ) {
+                return $color;
+            }
+            return null;
+        }
+    }
+
+    if ( ! function_exists( 'checked' ) ) {
+        function checked( $checked, $current = true, $echo = true ) {
+            return __checked_selected_helper( $checked, $current, $echo, 'checked' );
+        }
+    }
+
+    if ( ! function_exists( '__checked_selected_helper' ) ) {
+        function __checked_selected_helper( $helper, $current, $echo, $type ) {
+            $result = '';
+            if ( (string) $helper === (string) $current ) {
+                $result = " $type='$type'";
+            }
+            if ( $echo ) {
+                echo $result;
+            }
+            return $result;
+        }
+    }
+
     // Load the plugin file (which triggers autoloader).
     require_once WC_PRODUCT_SLIDER_PLUGIN_FILE;
 }

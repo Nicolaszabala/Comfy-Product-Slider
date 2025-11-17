@@ -1,0 +1,303 @@
+<?php
+/**
+ * The admin-specific functionality of the plugin.
+ *
+ * Defines the plugin name, version, and hooks for admin area.
+ *
+ * @package    WC_Product_Slider
+ * @subpackage WC_Product_Slider/Admin
+ * @since      1.0.0
+ */
+
+namespace WC_Product_Slider\Admin;
+
+/**
+ * Admin class
+ *
+ * Handles all admin-specific functionality including:
+ * - Enqueuing admin styles and scripts
+ * - Registering meta boxes
+ * - Saving post meta data
+ *
+ * @since 1.0.0
+ */
+class WC_Product_Slider_Admin {
+
+	/**
+	 * The ID of this plugin.
+	 *
+	 * @since  1.0.0
+	 * @access private
+	 * @var    string    $plugin_name    The ID of this plugin.
+	 */
+	private $plugin_name;
+
+	/**
+	 * The version of this plugin.
+	 *
+	 * @since  1.0.0
+	 * @access private
+	 * @var    string    $version    The current version of this plugin.
+	 */
+	private $version;
+
+	/**
+	 * Initialize the class and set its properties.
+	 *
+	 * @since 1.0.0
+	 * @param string $plugin_name The name of this plugin.
+	 * @param string $version     The version of this plugin.
+	 */
+	public function __construct( $plugin_name, $version ) {
+		$this->plugin_name = $plugin_name;
+		$this->version     = $version;
+	}
+
+	/**
+	 * Register the stylesheets for the admin area.
+	 *
+	 * @since 1.0.0
+	 */
+	public function enqueue_styles() {
+		// Enqueue only on our CPT edit screen.
+		$screen = get_current_screen();
+		if ( ! $screen || 'wc_product_slider' !== $screen->post_type ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'wc-product-slider-admin',
+			plugin_dir_url( __DIR__ ) . 'admin/css/wc-product-slider-admin.css',
+			array(),
+			$this->version,
+			'all'
+		);
+	}
+
+	/**
+	 * Register the JavaScript for the admin area.
+	 *
+	 * @since 1.0.0
+	 */
+	public function enqueue_scripts() {
+		// Enqueue only on our CPT edit screen.
+		$screen = get_current_screen();
+		if ( ! $screen || 'wc_product_slider' !== $screen->post_type ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'wc-product-slider-admin',
+			plugin_dir_url( __DIR__ ) . 'admin/js/wc-product-slider-admin.js',
+			array( 'jquery' ),
+			$this->version,
+			false
+		);
+	}
+
+	/**
+	 * Register meta boxes for slider configuration.
+	 *
+	 * @since 1.0.0
+	 */
+	public function add_meta_boxes() {
+		add_meta_box(
+			'wc_product_slider_products',
+			__( 'Products', 'woocommerce-product-slider' ),
+			array( $this, 'render_products_meta_box' ),
+			'wc_product_slider',
+			'normal',
+			'high'
+		);
+
+		add_meta_box(
+			'wc_product_slider_design',
+			__( 'Design Settings', 'woocommerce-product-slider' ),
+			array( $this, 'render_design_meta_box' ),
+			'wc_product_slider',
+			'normal',
+			'default'
+		);
+
+		add_meta_box(
+			'wc_product_slider_behavior',
+			__( 'Behavior Settings', 'woocommerce-product-slider' ),
+			array( $this, 'render_behavior_meta_box' ),
+			'wc_product_slider',
+			'side',
+			'default'
+		);
+	}
+
+	/**
+	 * Render products meta box.
+	 *
+	 * @since 1.0.0
+	 * @param \WP_Post $post Current post object.
+	 */
+	public function render_products_meta_box( $post ) {
+		// Add nonce for security.
+		wp_nonce_field( 'wc_product_slider_save_products', 'wc_product_slider_products_nonce' );
+
+		// Get saved products.
+		$selected_products = get_post_meta( $post->ID, '_wc_ps_products', true );
+		if ( ! is_array( $selected_products ) ) {
+			$selected_products = array();
+		}
+
+		echo '<p>' . esc_html__( 'Select products to display in this slider.', 'woocommerce-product-slider' ) . '</p>';
+		echo '<input type="hidden" name="wc_ps_products" id="wc_ps_products" value="' . esc_attr( implode( ',', $selected_products ) ) . '" />';
+		echo '<div id="wc-ps-product-selector"></div>';
+	}
+
+	/**
+	 * Render design meta box.
+	 *
+	 * @since 1.0.0
+	 * @param \WP_Post $post Current post object.
+	 */
+	public function render_design_meta_box( $post ) {
+		wp_nonce_field( 'wc_product_slider_save_design', 'wc_product_slider_design_nonce' );
+
+		$primary_color   = get_post_meta( $post->ID, '_wc_ps_primary_color', true );
+		$secondary_color = get_post_meta( $post->ID, '_wc_ps_secondary_color', true );
+
+		if ( empty( $primary_color ) ) {
+			$primary_color = '#000000';
+		}
+		if ( empty( $secondary_color ) ) {
+			$secondary_color = '#ffffff';
+		}
+		?>
+		<p>
+			<label for="wc_ps_primary_color"><?php esc_html_e( 'Primary Color:', 'woocommerce-product-slider' ); ?></label><br>
+			<input type="color" name="wc_ps_primary_color" id="wc_ps_primary_color" value="<?php echo esc_attr( $primary_color ); ?>" />
+		</p>
+		<p>
+			<label for="wc_ps_secondary_color"><?php esc_html_e( 'Secondary Color:', 'woocommerce-product-slider' ); ?></label><br>
+			<input type="color" name="wc_ps_secondary_color" id="wc_ps_secondary_color" value="<?php echo esc_attr( $secondary_color ); ?>" />
+		</p>
+		<?php
+	}
+
+	/**
+	 * Render behavior meta box.
+	 *
+	 * @since 1.0.0
+	 * @param \WP_Post $post Current post object.
+	 */
+	public function render_behavior_meta_box( $post ) {
+		wp_nonce_field( 'wc_product_slider_save_behavior', 'wc_product_slider_behavior_nonce' );
+
+		$autoplay = get_post_meta( $post->ID, '_wc_ps_autoplay', true );
+		$loop     = get_post_meta( $post->ID, '_wc_ps_loop', true );
+		$speed    = get_post_meta( $post->ID, '_wc_ps_speed', true );
+
+		if ( empty( $speed ) ) {
+			$speed = 3000;
+		}
+		?>
+		<p>
+			<label>
+				<input type="checkbox" name="wc_ps_autoplay" value="1" <?php checked( $autoplay, '1' ); ?> />
+				<?php esc_html_e( 'Enable Autoplay', 'woocommerce-product-slider' ); ?>
+			</label>
+		</p>
+		<p>
+			<label>
+				<input type="checkbox" name="wc_ps_loop" value="1" <?php checked( $loop, '1' ); ?> />
+				<?php esc_html_e( 'Loop Slides', 'woocommerce-product-slider' ); ?>
+			</label>
+		</p>
+		<p>
+			<label for="wc_ps_speed"><?php esc_html_e( 'Autoplay Speed (ms):', 'woocommerce-product-slider' ); ?></label><br>
+			<input type="number" name="wc_ps_speed" id="wc_ps_speed" value="<?php echo esc_attr( $speed ); ?>" min="1000" max="10000" step="100" />
+		</p>
+		<?php
+	}
+
+	/**
+	 * Save meta box data.
+	 *
+	 * @since 1.0.0
+	 * @param int $post_id Post ID.
+	 */
+	public function save_meta_box( $post_id ) {
+		// Check if this is an autosave.
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		// Check post type.
+		if ( ! isset( $_POST['post_type'] ) || 'wc_product_slider' !== $_POST['post_type'] ) {
+			return;
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		// Save products.
+		if ( isset( $_POST['wc_product_slider_products_nonce'] ) &&
+			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wc_product_slider_products_nonce'] ) ), 'wc_product_slider_save_products' ) ) {
+
+			if ( isset( $_POST['wc_ps_products'] ) ) {
+				$products       = sanitize_text_field( wp_unslash( $_POST['wc_ps_products'] ) );
+				$products_array = array_filter( array_map( 'absint', explode( ',', $products ) ) );
+				update_post_meta( $post_id, '_wc_ps_products', $products_array );
+			}
+		}
+
+		// Save design settings.
+		if ( isset( $_POST['wc_product_slider_design_nonce'] ) &&
+			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wc_product_slider_design_nonce'] ) ), 'wc_product_slider_save_design' ) ) {
+
+			if ( isset( $_POST['wc_ps_primary_color'] ) ) {
+				$primary_color = sanitize_hex_color( wp_unslash( $_POST['wc_ps_primary_color'] ) );
+				update_post_meta( $post_id, '_wc_ps_primary_color', $primary_color );
+			}
+
+			if ( isset( $_POST['wc_ps_secondary_color'] ) ) {
+				$secondary_color = sanitize_hex_color( wp_unslash( $_POST['wc_ps_secondary_color'] ) );
+				update_post_meta( $post_id, '_wc_ps_secondary_color', $secondary_color );
+			}
+		}
+
+		// Save behavior settings.
+		if ( isset( $_POST['wc_product_slider_behavior_nonce'] ) &&
+			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wc_product_slider_behavior_nonce'] ) ), 'wc_product_slider_save_behavior' ) ) {
+
+			$autoplay = isset( $_POST['wc_ps_autoplay'] ) ? '1' : '0';
+			update_post_meta( $post_id, '_wc_ps_autoplay', $autoplay );
+
+			$loop = isset( $_POST['wc_ps_loop'] ) ? '1' : '0';
+			update_post_meta( $post_id, '_wc_ps_loop', $loop );
+
+			if ( isset( $_POST['wc_ps_speed'] ) ) {
+				$speed = absint( $_POST['wc_ps_speed'] );
+				update_post_meta( $post_id, '_wc_ps_speed', $speed );
+			}
+		}
+	}
+
+	/**
+	 * Get the plugin name.
+	 *
+	 * @since  1.0.0
+	 * @return string The plugin name.
+	 */
+	public function get_plugin_name() {
+		return $this->plugin_name;
+	}
+
+	/**
+	 * Get the plugin version.
+	 *
+	 * @since  1.0.0
+	 * @return string The plugin version.
+	 */
+	public function get_version() {
+		return $this->version;
+	}
+}
