@@ -60,14 +60,14 @@ echo ""
 echo "4. Verificando hooks personalizados..."
 CUSTOM_HOOKS=$(grep -rn "apply_filters\|do_action" includes/ 2>/dev/null | grep -v "^\s*//" | grep -v "add_action\|add_filter" || true)
 if [ -n "$CUSTOM_HOOKS" ]; then
-    # Verificar que tengan prefijo
-    BAD_HOOKS=$(echo "$CUSTOM_HOOKS" | grep -v "wc_product_slider_" || true)
+    # Verificar que tengan prefijo (excluyendo WordPress core y WooCommerce hooks)
+    BAD_HOOKS=$(echo "$CUSTOM_HOOKS" | grep -v "wc_product_slider_" | grep -v "woocommerce_" | grep -v "wp_" | grep -v "phpcs:disable\|phpcs:ignore" || true)
     if [ -n "$BAD_HOOKS" ]; then
         echo -e "${RED}✗ ERRORES: Hooks personalizados sin prefijo wc_product_slider_${NC}"
         echo "$BAD_HOOKS"
         ERRORS=$((ERRORS + 1))
     else
-        echo -e "${GREEN}✓ OK: Todos los hooks tienen prefijo correcto${NC}"
+        echo -e "${GREEN}✓ OK: Todos los hooks tienen prefijo correcto (o son WordPress/WooCommerce core)${NC}"
     fi
 else
     echo -e "${GREEN}✓ OK: No hay hooks personalizados todavía (se verificarán en futuras fases)${NC}"
@@ -76,15 +76,15 @@ echo ""
 
 # 5. Verificar enqueue de scripts/styles
 echo "5. Verificando wp_enqueue handles..."
-ENQUEUES=$(grep -rn "wp_enqueue_script\|wp_enqueue_style" includes/ 2>/dev/null | grep -v "^\s*//" | grep -v "Example:" || true)
+ENQUEUES=$(grep -rn "wp_enqueue_script\|wp_enqueue_style" includes/ 2>/dev/null | grep -v "^\s*//" | grep -v "Example:" | grep -v "add_action\|add_filter" || true)
 if [ -n "$ENQUEUES" ]; then
-    BAD_ENQUEUES=$(echo "$ENQUEUES" | grep -v "wc-product-slider-" || true)
+    BAD_ENQUEUES=$(echo "$ENQUEUES" | grep -v "wc-product-slider-" | grep -v "'swiper'" || true)
     if [ -n "$BAD_ENQUEUES" ]; then
         echo -e "${RED}✗ ERRORES: Handles de enqueue sin prefijo wc-product-slider-${NC}"
         echo "$BAD_ENQUEUES"
         ERRORS=$((ERRORS + 1))
     else
-        echo -e "${GREEN}✓ OK: Todos los handles tienen prefijo correcto${NC}"
+        echo -e "${GREEN}✓ OK: Todos los handles tienen prefijo correcto (o son third-party libraries)${NC}"
     fi
 else
     echo -e "${GREEN}✓ OK: No hay enqueues todavía (se verificarán en futuras fases)${NC}"

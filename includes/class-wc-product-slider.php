@@ -71,6 +71,24 @@ class WC_Product_Slider {
 	protected $admin;
 
 	/**
+	 * The public-facing handler.
+	 *
+	 * @since  1.0.0
+	 * @access protected
+	 * @var    PublicFacing\WC_Product_Slider_Public $public_facing Public-facing handler.
+	 */
+	protected $public_facing;
+
+	/**
+	 * The shortcode handler.
+	 *
+	 * @since  1.0.0
+	 * @access protected
+	 * @var    PublicFacing\WC_Product_Slider_Shortcode $shortcode Shortcode handler.
+	 */
+	protected $shortcode;
+
+	/**
 	 * Define the core functionality of the plugin.
 	 *
 	 * Set the plugin name and the plugin version that can be used throughout the plugin.
@@ -168,8 +186,15 @@ class WC_Product_Slider {
 	 * @access private
 	 */
 	private function define_public_hooks() {
-		// Public hooks will be added here as we develop.
-		// Example: $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' ).
+		// Initialize public-facing class.
+		$this->public_facing = new PublicFacing\WC_Product_Slider_Public( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'wp_enqueue_scripts', $this->public_facing, 'enqueue_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $this->public_facing, 'enqueue_scripts' );
+
+		// Initialize and register shortcode.
+		$this->shortcode = new PublicFacing\WC_Product_Slider_Shortcode();
+		$this->loader->add_action( 'init', $this->shortcode, 'register' );
 	}
 
 	/**
