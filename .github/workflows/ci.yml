@@ -19,13 +19,13 @@ jobs:
         with:
           php-version: '8.1'
           coverage: none
-          tools: composer, cs2pr
+          tools: composer
 
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress
 
       - name: Run PHPCS
-        run: composer run-script phpcs -- --report=checkstyle | cs2pr
+        run: composer run-script phpcs
 
   phpstan:
     name: PHPStan
@@ -134,7 +134,7 @@ jobs:
 
       - name: Upload build artifacts
         if: success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-files
           path: build/
