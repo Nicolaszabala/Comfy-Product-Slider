@@ -426,10 +426,13 @@ class WC_Product_Slider_Admin {
 		}
 
 		// Handle form submission.
-		if ( isset( $_POST['wc_ps_settings_nonce'] ) &&
-			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wc_ps_settings_nonce'] ) ), 'wc_ps_save_settings' ) ) {
+		if ( isset( $_POST['wc_ps_settings_nonce'] ) ) {
 			$this->save_settings();
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Settings saved successfully.', 'woocommerce-product-slider' ) . '</p></div>';
+			// Only show success message if nonce was valid (settings were saved).
+			if ( isset( $_POST['wc_ps_settings_nonce'] ) &&
+				wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wc_ps_settings_nonce'] ) ), 'wc_ps_save_settings' ) ) {
+				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Settings saved successfully.', 'woocommerce-product-slider' ) . '</p></div>';
+			}
 		}
 
 		// Get current settings.
@@ -496,6 +499,12 @@ class WC_Product_Slider_Admin {
 	 * @since 1.0.0
 	 */
 	private function save_settings() {
+		// Verify nonce for security.
+		if ( ! isset( $_POST['wc_ps_settings_nonce'] ) ||
+			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wc_ps_settings_nonce'] ) ), 'wc_ps_save_settings' ) ) {
+			return;
+		}
+
 		// Save default autoplay.
 		$default_autoplay = isset( $_POST['wc_ps_default_autoplay'] ) ? '1' : '0';
 		update_option( 'wc_ps_default_autoplay', $default_autoplay );
