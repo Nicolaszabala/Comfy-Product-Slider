@@ -62,6 +62,33 @@ class WC_Product_Slider {
 	protected $cpt;
 
 	/**
+	 * The admin handler.
+	 *
+	 * @since  1.0.0
+	 * @access protected
+	 * @var    Admin\WC_Product_Slider_Admin $admin Admin handler.
+	 */
+	protected $admin;
+
+	/**
+	 * The public-facing handler.
+	 *
+	 * @since  1.0.0
+	 * @access protected
+	 * @var    PublicFacing\WC_Product_Slider_Public $public_facing Public-facing handler.
+	 */
+	protected $public_facing;
+
+	/**
+	 * The shortcode handler.
+	 *
+	 * @since  1.0.0
+	 * @access protected
+	 * @var    PublicFacing\WC_Product_Slider_Shortcode $shortcode Shortcode handler.
+	 */
+	protected $shortcode;
+
+	/**
 	 * Define the core functionality of the plugin.
 	 *
 	 * Set the plugin name and the plugin version that can be used throughout the plugin.
@@ -143,8 +170,12 @@ class WC_Product_Slider {
 	 * @access private
 	 */
 	private function define_admin_hooks() {
-		// Admin hooks will be added here as we develop.
-		// Example: $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' ).
+		$this->admin = new Admin\WC_Product_Slider_Admin( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'admin_enqueue_scripts', $this->admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $this->admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'add_meta_boxes_wc_product_slider', $this->admin, 'add_meta_boxes' );
+		$this->loader->add_action( 'save_post_wc_product_slider', $this->admin, 'save_meta_box' );
 	}
 
 	/**
@@ -155,8 +186,15 @@ class WC_Product_Slider {
 	 * @access private
 	 */
 	private function define_public_hooks() {
-		// Public hooks will be added here as we develop.
-		// Example: $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' ).
+		// Initialize public-facing class.
+		$this->public_facing = new PublicFacing\WC_Product_Slider_Public( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'wp_enqueue_scripts', $this->public_facing, 'enqueue_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $this->public_facing, 'enqueue_scripts' );
+
+		// Initialize and register shortcode.
+		$this->shortcode = new PublicFacing\WC_Product_Slider_Shortcode();
+		$this->loader->add_action( 'init', $this->shortcode, 'register' );
 	}
 
 	/**
@@ -207,5 +245,15 @@ class WC_Product_Slider {
 	 */
 	public function get_cpt() {
 		return $this->cpt;
+	}
+
+	/**
+	 * Get the admin handler.
+	 *
+	 * @since  1.0.0
+	 * @return Admin\WC_Product_Slider_Admin The admin handler.
+	 */
+	public function get_admin() {
+		return $this->admin;
 	}
 }

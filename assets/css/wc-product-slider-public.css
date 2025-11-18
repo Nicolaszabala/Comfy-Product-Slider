@@ -1,0 +1,273 @@
+/**
+ * Public Styles for WooCommerce Product Slider
+ *
+ * @package WC_Product_Slider
+ */
+
+/* Slider Container */
+.wc-ps-slider {
+	margin: 30px 0;
+	position: relative;
+}
+
+.wc-ps-slider .swiper {
+	width: 100%;
+	padding: 10px 50px 40px;
+}
+
+/* Product Card */
+.wc-ps-product {
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	overflow: hidden;
+	transition: all 0.3s ease;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.wc-ps-product:hover {
+	border-color: #999;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	transform: translateY(-2px);
+}
+
+.wc-ps-product-link {
+	text-decoration: none;
+	color: inherit;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+/* Product Image */
+.wc-ps-product-image {
+	width: 100%;
+	height: auto;
+	display: block;
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+}
+
+/* Product Info */
+.wc-ps-product-info {
+	padding: 20px;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+}
+
+.wc-ps-product-title {
+	font-size: 16px;
+	font-weight: 600;
+	margin: 0 0 10px;
+	line-height: 1.4;
+	color: #333;
+	flex: 1;
+}
+
+.wc-ps-product-price {
+	font-size: 18px;
+	font-weight: 700;
+	color: #333;
+	margin-bottom: 15px;
+}
+
+.wc-ps-product-price del {
+	opacity: 0.5;
+	font-weight: 400;
+	font-size: 14px;
+	margin-right: 5px;
+}
+
+.wc-ps-product-price ins {
+	text-decoration: none;
+	color: #c44;
+}
+
+/* Product Badge */
+.wc-ps-product-badge {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	background: #c44;
+	color: #fff;
+	padding: 5px 12px;
+	border-radius: 4px;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.wc-ps-product-badge-sale {
+	background: #ff6b6b;
+}
+
+/* Product Actions */
+.wc-ps-product-actions {
+	margin-top: auto;
+}
+
+.wc-ps-product-actions .button {
+	width: 100%;
+	text-align: center;
+	padding: 12px 24px;
+	background: #333;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	transition: background 0.3s ease;
+	display: inline-block;
+}
+
+.wc-ps-product-actions .button:hover {
+	background: #000;
+	text-decoration: none;
+	color: #fff;
+}
+
+/* Swiper Navigation */
+.wc-ps-slider .swiper-button-next,
+.wc-ps-slider .swiper-button-prev {
+	width: 40px;
+	height: 40px;
+	background: #fff;
+	border-radius: 50%;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	transition: all 0.3s ease;
+}
+
+.wc-ps-slider .swiper-button-next:hover,
+.wc-ps-slider .swiper-button-prev:hover {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	transform: scale(1.1);
+}
+
+.wc-ps-slider .swiper-button-next::after,
+.wc-ps-slider .swiper-button-prev::after {
+	font-size: 18px;
+	font-weight: 700;
+}
+
+/* Swiper Pagination */
+.wc-ps-slider .swiper-pagination {
+	bottom: 0;
+}
+
+.wc-ps-slider .swiper-pagination-bullet {
+	width: 10px;
+	height: 10px;
+	opacity: 0.3;
+	transition: all 0.3s ease;
+}
+
+.wc-ps-slider .swiper-pagination-bullet-active {
+	opacity: 1;
+	transform: scale(1.2);
+}
+
+/* Error Message */
+.wc-ps-error {
+	padding: 15px 20px;
+	background: #fff3cd;
+	border: 1px solid #ffc107;
+	border-radius: 4px;
+	color: #856404;
+	font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.wc-ps-slider .swiper {
+		padding: 10px 30px 30px;
+	}
+
+	.wc-ps-product-title {
+		font-size: 14px;
+	}
+
+	.wc-ps-product-price {
+		font-size: 16px;
+	}
+
+	.wc-ps-slider .swiper-button-next,
+	.wc-ps-slider .swiper-button-prev {
+		width: 35px;
+		height: 35px;
+	}
+
+	.wc-ps-slider .swiper-button-next::after,
+	.wc-ps-slider .swiper-button-prev::after {
+		font-size: 16px;
+	}
+}
+
+@media (max-width: 480px) {
+	.wc-ps-slider .swiper {
+		padding: 10px 10px 30px;
+	}
+
+	.wc-ps-product-info {
+		padding: 15px;
+	}
+
+	.wc-ps-slider .swiper-button-next,
+	.wc-ps-slider .swiper-button-prev {
+		display: none;
+	}
+}
+
+/* Loading State */
+.wc-ps-slider.loading .swiper {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+/* Accessibility */
+.wc-ps-slider .swiper-button-next:focus,
+.wc-ps-slider .swiper-button-prev:focus {
+	outline: 2px solid #4a90e2;
+	outline-offset: 2px;
+}
+
+.wc-ps-product:focus-within {
+	outline: 2px solid #4a90e2;
+	outline-offset: 2px;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+	.wc-ps-product {
+		background: #1e1e1e;
+		border-color: #444;
+		color: #fff;
+	}
+
+	.wc-ps-product-title {
+		color: #fff;
+	}
+
+	.wc-ps-product-price {
+		color: #fff;
+	}
+
+	.wc-ps-product-actions .button {
+		background: #555;
+	}
+
+	.wc-ps-product-actions .button:hover {
+		background: #777;
+	}
+
+	.wc-ps-slider .swiper-button-next,
+	.wc-ps-slider .swiper-button-prev {
+		background: #2a2a2a;
+	}
+}

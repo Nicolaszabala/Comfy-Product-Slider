@@ -131,4 +131,26 @@ class Test_WC_Product_Slider extends PolyfillTestCase {
 
 		$this->assertNotNull( $cpt, 'CPT should not be null' );
 	}
+
+	/**
+	 * Test get_admin method.
+	 */
+	public function test_get_admin() {
+		$admin = $this->plugin->get_admin();
+
+		$this->assertInstanceOf(
+			'WC_Product_Slider\Admin\WC_Product_Slider_Admin',
+			$admin,
+			'Admin should be instance of WC_Product_Slider_Admin'
+		);
+	}
+
+	/**
+	 * Test admin is created during construction.
+	 */
+	public function test_admin_is_created() {
+		$admin = $this->plugin->get_admin();
+
+		$this->assertNotNull( $admin, 'Admin should not be null' );
+	}
 }
