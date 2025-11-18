@@ -193,7 +193,7 @@ class WC_Product_Slider_Shortcode {
 											<?php
 											// Add to cart button.
 											// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-											echo apply_filters( // woocommerce_ core hook
+											echo apply_filters( // woocommerce_ core hook.
 												'woocommerce_loop_add_to_cart_link',
 												sprintf(
 													'<a href="%s" data-product_id="%s" class="button product_type_%s">%s</a>',
