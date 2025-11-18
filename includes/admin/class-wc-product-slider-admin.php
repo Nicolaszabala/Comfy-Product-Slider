@@ -96,6 +96,9 @@ class WC_Product_Slider_Admin {
 			return;
 		}
 
+		// Enqueue WordPress Media Uploader.
+		wp_enqueue_media();
+
 		// Enqueue Select2 from WooCommerce.
 		if ( function_exists( 'wc_enqueue_js' ) ) {
 			wp_enqueue_script( 'select2' );
@@ -109,7 +112,7 @@ class WC_Product_Slider_Admin {
 		wp_enqueue_script(
 			'wc-product-slider-admin',
 			plugin_dir_url( dirname( __DIR__ ) ) . 'assets/js/admin.js',
-			array( 'jquery', 'select2', 'code-editor' ),
+			array( 'jquery', 'select2', 'code-editor', 'media-upload', 'media-views' ),
 			$this->version,
 			true
 		);
@@ -184,6 +187,15 @@ class WC_Product_Slider_Admin {
 			array( $this, 'render_display_options_meta_box' ),
 			'wc_product_slider',
 			'side',
+			'default'
+		);
+
+		add_meta_box(
+			'wc_product_slider_custom_slides',
+			__( 'Custom Slides', 'woocommerce-product-slider' ),
+			array( $this, 'render_custom_slides_meta_box' ),
+			'wc_product_slider',
+			'normal',
 			'default'
 		);
 	}
@@ -399,6 +411,7 @@ class WC_Product_Slider_Admin {
 		$show_rating      = get_post_meta( $post->ID, '_wc_ps_show_rating', true );
 		$button_text      = get_post_meta( $post->ID, '_wc_ps_button_text', true );
 		$slider_heading   = get_post_meta( $post->ID, '_wc_ps_slider_heading', true );
+		$clickable_image  = get_post_meta( $post->ID, '_wc_ps_clickable_image', true );
 
 		// Set defaults.
 		if ( empty( $show_title ) ) {
@@ -416,6 +429,9 @@ class WC_Product_Slider_Admin {
 		if ( empty( $button_text ) ) {
 			$button_text = __( 'View Product', 'woocommerce-product-slider' );
 		}
+		if ( empty( $clickable_image ) ) {
+			$clickable_image = '1';
+		}
 		?>
 		<p>
 			<label for="wc_ps_slider_heading">
@@ -423,6 +439,18 @@ class WC_Product_Slider_Admin {
 			</label><br>
 			<input type="text" name="wc_ps_slider_heading" id="wc_ps_slider_heading" value="<?php echo esc_attr( $slider_heading ); ?>" style="width:100%;" />
 		</p>
+		<hr>
+		<p>
+			<label>
+				<input type="checkbox" name="wc_ps_clickable_image" value="1" <?php checked( $clickable_image, '1' ); ?> />
+				<?php esc_html_e( 'Make Images Clickable', 'woocommerce-product-slider' ); ?>
+			</label>
+			<br>
+			<span class="description">
+				<?php esc_html_e( 'Products will link to product page. Custom slides will link to their specified URL.', 'woocommerce-product-slider' ); ?>
+			</span>
+		</p>
+		<hr>
 		<p>
 			<label>
 				<input type="checkbox" name="wc_ps_show_image" value="1" <?php checked( $show_image, '1' ); ?> />
@@ -465,6 +493,178 @@ class WC_Product_Slider_Admin {
 			</label><br>
 			<input type="text" name="wc_ps_button_text" id="wc_ps_button_text" value="<?php echo esc_attr( $button_text ); ?>" style="width:100%;" />
 		</p>
+		<?php
+	}
+
+	/**
+	 * Render custom slides meta box.
+	 *
+	 * @since 1.0.0
+	 * @param \WP_Post $post Current post object.
+	 */
+	public function render_custom_slides_meta_box( $post ) {
+		wp_nonce_field( 'wc_product_slider_save_custom_slides', 'wc_product_slider_custom_slides_nonce' );
+
+		$custom_slides = get_post_meta( $post->ID, '_wc_ps_custom_slides', true );
+		if ( ! is_array( $custom_slides ) ) {
+			$custom_slides = array();
+		}
+
+		?>
+		<div id="wc-ps-custom-slides-container">
+			<p class="description">
+				<?php esc_html_e( 'Add custom images with URLs. These will be added to the slider along with selected products.', 'woocommerce-product-slider' ); ?>
+			</p>
+
+			<div id="wc-ps-custom-slides-list">
+				<?php
+				if ( ! empty( $custom_slides ) ) {
+					foreach ( $custom_slides as $index => $slide ) {
+						$this->render_custom_slide_row( $index, $slide );
+					}
+				}
+				?>
+			</div>
+
+			<button type="button" class="button" id="wc-ps-add-custom-slide">
+				<?php esc_html_e( '+ Add Custom Slide', 'woocommerce-product-slider' ); ?>
+			</button>
+		</div>
+
+		<script type="text/template" id="wc-ps-custom-slide-template">
+			<?php $this->render_custom_slide_row( '{{INDEX}}', array() ); ?>
+		</script>
+
+		<script>
+		jQuery(document).ready(function($) {
+			var slideIndex = <?php echo count( $custom_slides ); ?>;
+
+			// Add new slide
+			$('#wc-ps-add-custom-slide').on('click', function() {
+				var template = $('#wc-ps-custom-slide-template').html();
+				var html = template.replace(/\{\{INDEX\}\}/g, slideIndex);
+				$('#wc-ps-custom-slides-list').append(html);
+				slideIndex++;
+			});
+
+			// Remove slide
+			$(document).on('click', '.wc-ps-remove-slide', function() {
+				$(this).closest('.wc-ps-custom-slide-row').remove();
+			});
+
+			// Upload image
+			$(document).on('click', '.wc-ps-upload-image', function(e) {
+				e.preventDefault();
+				var button = $(this);
+				var preview = button.siblings('.wc-ps-image-preview');
+				var input = button.siblings('.wc-ps-image-id');
+
+				var frame = wp.media({
+					title: '<?php esc_html_e( 'Select or Upload Image', 'woocommerce-product-slider' ); ?>',
+					button: {
+						text: '<?php esc_html_e( 'Use this image', 'woocommerce-product-slider' ); ?>'
+					},
+					multiple: false
+				});
+
+				frame.on('select', function() {
+					var attachment = frame.state().get('selection').first().toJSON();
+					input.val(attachment.id);
+					preview.html('<img src="' + attachment.url + '" style="max-width:150px; height:auto;" />');
+				});
+
+				frame.open();
+			});
+
+			// Remove image
+			$(document).on('click', '.wc-ps-remove-image', function(e) {
+				e.preventDefault();
+				$(this).siblings('.wc-ps-image-id').val('');
+				$(this).siblings('.wc-ps-image-preview').html('');
+			});
+		});
+		</script>
+
+		<style>
+		.wc-ps-custom-slide-row {
+			border: 1px solid #ddd;
+			padding: 15px;
+			margin-bottom: 15px;
+			background: #f9f9f9;
+			position: relative;
+		}
+		.wc-ps-custom-slide-row .wc-ps-remove-slide {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+		}
+		.wc-ps-image-preview {
+			margin: 10px 0;
+		}
+		.wc-ps-slide-field {
+			margin-bottom: 10px;
+		}
+		.wc-ps-slide-field label {
+			display: block;
+			font-weight: 600;
+			margin-bottom: 5px;
+		}
+		.wc-ps-slide-field input[type="text"],
+		.wc-ps-slide-field input[type="url"] {
+			width: 100%;
+		}
+		</style>
+		<?php
+	}
+
+	/**
+	 * Render a single custom slide row.
+	 *
+	 * @since 1.0.0
+	 * @param int|string $index Slide index.
+	 * @param array      $slide Slide data.
+	 */
+	private function render_custom_slide_row( $index, $slide = array() ) {
+		$image_id = isset( $slide['image_id'] ) ? $slide['image_id'] : '';
+		$url      = isset( $slide['url'] ) ? $slide['url'] : '';
+		$title    = isset( $slide['title'] ) ? $slide['title'] : '';
+
+		$image_url = '';
+		if ( $image_id ) {
+			$image_url = wp_get_attachment_url( $image_id );
+		}
+		?>
+		<div class="wc-ps-custom-slide-row">
+			<button type="button" class="button wc-ps-remove-slide">
+				<?php esc_html_e( 'Remove', 'woocommerce-product-slider' ); ?>
+			</button>
+
+			<div class="wc-ps-slide-field">
+				<label><?php esc_html_e( 'Image:', 'woocommerce-product-slider' ); ?></label>
+				<input type="hidden" class="wc-ps-image-id" name="wc_ps_custom_slides[<?php echo esc_attr( $index ); ?>][image_id]" value="<?php echo esc_attr( $image_id ); ?>" />
+				<button type="button" class="button wc-ps-upload-image">
+					<?php esc_html_e( 'Upload Image', 'woocommerce-product-slider' ); ?>
+				</button>
+				<button type="button" class="button wc-ps-remove-image">
+					<?php esc_html_e( 'Remove Image', 'woocommerce-product-slider' ); ?>
+				</button>
+				<div class="wc-ps-image-preview">
+					<?php if ( $image_url ) : ?>
+						<img src="<?php echo esc_url( $image_url ); ?>" style="max-width:150px; height:auto;" />
+					<?php endif; ?>
+				</div>
+			</div>
+
+			<div class="wc-ps-slide-field">
+				<label><?php esc_html_e( 'Link URL:', 'woocommerce-product-slider' ); ?></label>
+				<input type="url" name="wc_ps_custom_slides[<?php echo esc_attr( $index ); ?>][url]" value="<?php echo esc_url( $url ); ?>" placeholder="https://" />
+			</div>
+
+			<div class="wc-ps-slide-field">
+				<label><?php esc_html_e( 'Title (optional):', 'woocommerce-product-slider' ); ?></label>
+				<input type="text" name="wc_ps_custom_slides[<?php echo esc_attr( $index ); ?>][title]" value="<?php echo esc_attr( $title ); ?>" />
+			</div>
+		</div>
 		<?php
 	}
 
@@ -603,6 +803,9 @@ class WC_Product_Slider_Admin {
 				$slider_heading = sanitize_text_field( wp_unslash( $_POST['wc_ps_slider_heading'] ) );
 				update_post_meta( $post_id, '_wc_ps_slider_heading', $slider_heading );
 			}
+
+			$clickable_image = isset( $_POST['wc_ps_clickable_image'] ) ? '1' : '0';
+			update_post_meta( $post_id, '_wc_ps_clickable_image', $clickable_image );
 		}
 
 		// Save behavior settings.
@@ -629,6 +832,28 @@ class WC_Product_Slider_Admin {
 				$custom_css = wp_strip_all_tags( wp_unslash( $_POST['wc_ps_custom_css'] ) );
 				update_post_meta( $post_id, '_wc_ps_custom_css', $custom_css );
 			}
+		}
+
+		// Save custom slides.
+		if ( isset( $_POST['wc_product_slider_custom_slides_nonce'] ) &&
+			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wc_product_slider_custom_slides_nonce'] ) ), 'wc_product_slider_save_custom_slides' ) ) {
+
+			$custom_slides = array();
+
+			if ( isset( $_POST['wc_ps_custom_slides'] ) && is_array( $_POST['wc_ps_custom_slides'] ) ) {
+				foreach ( $_POST['wc_ps_custom_slides'] as $slide ) {
+					// Only save slides that have an image.
+					if ( ! empty( $slide['image_id'] ) ) {
+						$custom_slides[] = array(
+							'image_id' => absint( $slide['image_id'] ),
+							'url'      => isset( $slide['url'] ) ? esc_url_raw( wp_unslash( $slide['url'] ) ) : '',
+							'title'    => isset( $slide['title'] ) ? sanitize_text_field( wp_unslash( $slide['title'] ) ) : '',
+						);
+					}
+				}
+			}
+
+			update_post_meta( $post_id, '_wc_ps_custom_slides', $custom_slides );
 		}
 	}
 
