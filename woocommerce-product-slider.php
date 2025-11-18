@@ -51,9 +51,11 @@ define( 'WC_PRODUCT_SLIDER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WC_PRODUCT_SLIDER_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 /**
- * Composer autoloader.
+ * Composer autoloader (optional).
  */
-require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'vendor/autoload.php';
+if ( file_exists( WC_PRODUCT_SLIDER_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
+	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'vendor/autoload.php';
+}
 
 /**
  * The code that runs during plugin activation.
@@ -75,9 +77,34 @@ register_activation_hook( __FILE__, 'wc_product_slider_activate' );
 register_deactivation_hook( __FILE__, 'wc_product_slider_deactivate' );
 
 /**
- * The core plugin class.
+ * Load plugin classes manually if composer autoloader is not available.
  */
-require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/class-wc-product-slider.php';
+if ( ! class_exists( 'WC_Product_Slider\WC_Product_Slider_Loader' ) ) {
+	// Core classes
+	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/class-wc-product-slider-loader.php';
+	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/class-wc-product-slider-activator.php';
+	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/class-wc-product-slider-deactivator.php';
+
+	// CPT and core functionality
+	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/core/class-wc-product-slider-cpt.php';
+	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/core/class-wc-product-slider-image-handler.php';
+	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/core/class-wc-product-slider-sanitizer.php';
+
+	// Admin classes
+	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/admin/class-wc-product-slider-admin.php';
+
+	// Public classes
+	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/public/class-wc-product-slider-public.php';
+	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/public/class-wc-product-slider-shortcode.php';
+
+	// Main plugin class
+	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/class-wc-product-slider.php';
+} else {
+	/**
+	 * The core plugin class (loaded by composer autoloader).
+	 */
+	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/class-wc-product-slider.php';
+}
 
 /**
  * Begins execution of the plugin.
