@@ -132,29 +132,37 @@ function wc_product_slider_run() {
 	$plugin->run();
 }
 
-// Check if WooCommerce is active.
-if ( class_exists( 'WooCommerce' ) ) {
-	wc_product_slider_run();
-} else {
-	/**
-	 * Display admin notice if WooCommerce is not active.
-	 */
-	function wc_product_slider_woocommerce_missing_notice() {
-		?>
-		<div class="notice notice-error">
-			<p>
-				<?php
-				echo wp_kses_post(
-					sprintf(
-						/* translators: %s: WooCommerce plugin name */
-						__( '<strong>WooCommerce Product Slider</strong> requires %s to be installed and activated.', 'woocommerce-product-slider' ),
-						'<a href="https://wordpress.org/plugins/woocommerce/" target="_blank">WooCommerce</a>'
-					)
-				);
-				?>
-			</p>
-		</div>
-		<?php
-	}
-	add_action( 'admin_notices', 'wc_product_slider_woocommerce_missing_notice' );
+/**
+ * Display admin notice if WooCommerce is not active.
+ */
+function wc_product_slider_woocommerce_missing_notice() {
+	?>
+	<div class="notice notice-error">
+		<p>
+			<?php
+			echo wp_kses_post(
+				sprintf(
+					/* translators: %s: WooCommerce plugin name */
+					__( '<strong>WooCommerce Product Slider</strong> requires %s to be installed and activated.', 'woocommerce-product-slider' ),
+					'<a href="https://wordpress.org/plugins/woocommerce/" target="_blank">WooCommerce</a>'
+				)
+			);
+			?>
+		</p>
+	</div>
+	<?php
 }
+
+/**
+ * Check if WooCommerce is active after all plugins are loaded.
+ */
+add_action(
+	'plugins_loaded',
+	function () {
+		if ( class_exists( 'WooCommerce' ) ) {
+			wc_product_slider_run();
+		} else {
+			add_action( 'admin_notices', 'wc_product_slider_woocommerce_missing_notice' );
+		}
+	}
+);
