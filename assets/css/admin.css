@@ -1,0 +1,45 @@
+/**
+ * WooCommerce Product Slider - Admin Styles
+ */
+
+.wc-ps-shortcode-container {
+	background: #f0f0f1;
+	padding: 15px;
+	border-radius: 4px;
+	margin-top: 10px;
+}
+
+.wc-ps-shortcode-wrapper {
+	display: flex;
+	gap: 10px;
+	margin-top: 10px;
+}
+
+.wc-ps-shortcode-input {
+	flex: 1;
+	padding: 8px;
+	font-family: monospace;
+	font-size: 14px;
+	background: #fff;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+}
+
+.wc-ps-copy-shortcode {
+	white-space: nowrap;
+}
+
+.wc-ps-copy-feedback {
+	font-weight: 600;
+}
+
+/* Product selector */
+#wc_ps_products {
+	max-width: 100%;
+}
+
+/* CodeMirror editor */
+.CodeMirror {
+	border: 1px solid #ddd;
+	min-height: 200px;
+}
