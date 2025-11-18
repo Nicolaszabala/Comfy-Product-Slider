@@ -399,6 +399,132 @@ class WC_Product_Slider_Admin {
 	}
 
 	/**
+	 * Add settings page to WordPress admin menu.
+	 *
+	 * @since 1.0.0
+	 */
+	public function add_settings_page() {
+		add_submenu_page(
+			'edit.php?post_type=wc_product_slider',
+			__( 'Settings', 'woocommerce-product-slider' ),
+			__( 'Settings', 'woocommerce-product-slider' ),
+			'manage_options',
+			'wc-product-slider-settings',
+			array( $this, 'render_settings_page' )
+		);
+	}
+
+	/**
+	 * Render the settings page.
+	 *
+	 * @since 1.0.0
+	 */
+	public function render_settings_page() {
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// Handle form submission.
+		if ( isset( $_POST['wc_ps_settings_nonce'] ) &&
+			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wc_ps_settings_nonce'] ) ), 'wc_ps_save_settings' ) ) {
+			$this->save_settings();
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Settings saved successfully.', 'woocommerce-product-slider' ) . '</p></div>';
+		}
+
+		// Get current settings.
+		$default_autoplay = get_option( 'wc_ps_default_autoplay', '1' );
+		$default_loop     = get_option( 'wc_ps_default_loop', '1' );
+		$default_speed    = get_option( 'wc_ps_default_speed', '3000' );
+		?>
+		<div class="wrap">
+			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<form method="post" action="">
+				<?php wp_nonce_field( 'wc_ps_save_settings', 'wc_ps_settings_nonce' ); ?>
+				<table class="form-table">
+					<tbody>
+						<tr>
+							<th scope="row">
+								<label for="wc_ps_default_autoplay">
+									<?php esc_html_e( 'Default Autoplay', 'woocommerce-product-slider' ); ?>
+								</label>
+							</th>
+							<td>
+								<input type="checkbox" name="wc_ps_default_autoplay" id="wc_ps_default_autoplay" value="1" <?php checked( $default_autoplay, '1' ); ?> />
+								<p class="description">
+									<?php esc_html_e( 'Enable autoplay by default for new sliders.', 'woocommerce-product-slider' ); ?>
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label for="wc_ps_default_loop">
+									<?php esc_html_e( 'Default Loop', 'woocommerce-product-slider' ); ?>
+								</label>
+							</th>
+							<td>
+								<input type="checkbox" name="wc_ps_default_loop" id="wc_ps_default_loop" value="1" <?php checked( $default_loop, '1' ); ?> />
+								<p class="description">
+									<?php esc_html_e( 'Enable loop by default for new sliders.', 'woocommerce-product-slider' ); ?>
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<label for="wc_ps_default_speed">
+									<?php esc_html_e( 'Default Autoplay Speed (ms)', 'woocommerce-product-slider' ); ?>
+								</label>
+							</th>
+							<td>
+								<input type="number" name="wc_ps_default_speed" id="wc_ps_default_speed" value="<?php echo esc_attr( $default_speed ); ?>" min="1000" max="10000" step="100" />
+								<p class="description">
+									<?php esc_html_e( 'Default autoplay speed in milliseconds for new sliders.', 'woocommerce-product-slider' ); ?>
+								</p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<?php submit_button( __( 'Save Settings', 'woocommerce-product-slider' ) ); ?>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Save settings.
+	 *
+	 * @since 1.0.0
+	 */
+	private function save_settings() {
+		// Save default autoplay.
+		$default_autoplay = isset( $_POST['wc_ps_default_autoplay'] ) ? '1' : '0';
+		update_option( 'wc_ps_default_autoplay', $default_autoplay );
+
+		// Save default loop.
+		$default_loop = isset( $_POST['wc_ps_default_loop'] ) ? '1' : '0';
+		update_option( 'wc_ps_default_loop', $default_loop );
+
+		// Save default speed.
+		if ( isset( $_POST['wc_ps_default_speed'] ) ) {
+			$default_speed = absint( $_POST['wc_ps_default_speed'] );
+			update_option( 'wc_ps_default_speed', $default_speed );
+		}
+	}
+
+	/**
+	 * Add settings link to plugin list.
+	 *
+	 * @since 1.0.0
+	 * @param array $links Existing plugin action links.
+	 * @return array Modified plugin action links.
+	 */
+	public function add_plugin_action_links( $links ) {
+		$settings_link = '<a href="' . esc_url( admin_url( 'edit.php?post_type=wc_product_slider&page=wc-product-slider-settings' ) ) . '">' . __( 'Settings', 'woocommerce-product-slider' ) . '</a>';
+		array_unshift( $links, $settings_link );
+		return $links;
+	}
+
+	/**
 	 * Get the plugin name.
 	 *
 	 * @since  1.0.0

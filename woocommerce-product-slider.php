@@ -3,19 +3,19 @@
  * WooCommerce Product Slider
  *
  * @package           WC_Product_Slider
- * @author            Your Name
- * @copyright         2025 Your Name
+ * @author            Nicolas Zabala
+ * @copyright         2025 Nicolas Zabala
  * @license           GPL-2.0-or-later
  *
  * @wordpress-plugin
  * Plugin Name:       WooCommerce Product Slider
- * Plugin URI:        https://example.com/woocommerce-product-slider
+ * Plugin URI:        https://github.com/Nicolaszabala/product-slider-plugin
  * Description:       Professional WooCommerce Product Slider with advanced customization options. Create beautiful, responsive product sliders with intuitive visual controls.
  * Version:           1.0.0
  * Requires at least: 6.2
  * Requires PHP:      7.4
- * Author:            Your Name
- * Author URI:        https://example.com
+ * Author:            Nicolas Zabala
+ * Author URI:        https://github.com/Nicolaszabala
  * Text Domain:       woocommerce-product-slider
  * Domain Path:       /languages
  * License:           GPL v2 or later
@@ -56,6 +56,18 @@ define( 'WC_PRODUCT_SLIDER_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 if ( file_exists( WC_PRODUCT_SLIDER_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
 	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'vendor/autoload.php';
 }
+
+/**
+ * Declare compatibility with WooCommerce features.
+ */
+add_action(
+	'before_woocommerce_init',
+	function() {
+		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
+	}
+);
 
 /**
  * The code that runs during plugin activation.

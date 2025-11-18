@@ -176,6 +176,8 @@ class WC_Product_Slider {
 		$this->loader->add_action( 'admin_enqueue_scripts', $this->admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'add_meta_boxes_wc_product_slider', $this->admin, 'add_meta_boxes' );
 		$this->loader->add_action( 'save_post_wc_product_slider', $this->admin, 'save_meta_box' );
+		$this->loader->add_action( 'admin_menu', $this->admin, 'add_settings_page' );
+		$this->loader->add_filter( 'plugin_action_links_' . WC_PRODUCT_SLIDER_PLUGIN_BASENAME, $this->admin, 'add_plugin_action_links' );
 	}
 
 	/**
