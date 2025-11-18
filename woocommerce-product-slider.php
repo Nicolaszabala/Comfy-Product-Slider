@@ -80,24 +80,24 @@ register_deactivation_hook( __FILE__, 'wc_product_slider_deactivate' );
  * Load plugin classes manually if composer autoloader is not available.
  */
 if ( ! class_exists( 'WC_Product_Slider\WC_Product_Slider_Loader' ) ) {
-	// Core classes
+	// Core classes.
 	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/class-wc-product-slider-loader.php';
 	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/class-wc-product-slider-activator.php';
 	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/class-wc-product-slider-deactivator.php';
 
-	// CPT and core functionality
+	// CPT and core functionality.
 	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/core/class-wc-product-slider-cpt.php';
 	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/core/class-wc-product-slider-image-handler.php';
 	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/core/class-wc-product-slider-sanitizer.php';
 
-	// Admin classes
+	// Admin classes.
 	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/admin/class-wc-product-slider-admin.php';
 
-	// Public classes
+	// Public classes.
 	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/public/class-wc-product-slider-public.php';
 	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/public/class-wc-product-slider-shortcode.php';
 
-	// Main plugin class
+	// Main plugin class.
 	require_once WC_PRODUCT_SLIDER_PLUGIN_DIR . 'includes/class-wc-product-slider.php';
 } else {
 	/**
