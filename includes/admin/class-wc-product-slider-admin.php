@@ -131,18 +131,55 @@ class WC_Product_Slider_Admin {
 	}
 
 	/**
+	 * Render admin header banner.
+	 *
+	 * @since 1.0.0
+	 */
+	public function render_admin_header() {
+		$screen = get_current_screen();
+		if ( ! $screen || 'wc_product_slider' !== $screen->post_type ) {
+			return;
+		}
+		?>
+		<div class="wc-ps-admin-header">
+			<div class="wc-ps-header-content">
+				<div class="wc-ps-logo">
+					<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M3 12L7 8L11 12L15 8L19 12L23 8" stroke="#0073AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						<rect x="2" y="4" width="4" height="4" rx="1" fill="#00A0D2"/>
+						<rect x="10" y="4" width="4" height="4" rx="1" fill="#0073AA"/>
+						<rect x="18" y="4" width="4" height="4" rx="1" fill="#00A0D2"/>
+						<rect x="2" y="16" width="4" height="4" rx="1" fill="#0073AA"/>
+						<rect x="10" y="16" width="4" height="4" rx="1" fill="#00A0D2"/>
+						<rect x="18" y="16" width="4" height="4" rx="1" fill="#0073AA"/>
+					</svg>
+				</div>
+				<div class="wc-ps-header-text">
+					<h1><?php esc_html_e( 'WooCommerce Product Slider', 'woocommerce-product-slider' ); ?></h1>
+					<p><?php esc_html_e( 'Create beautiful, responsive product sliders for your WooCommerce store', 'woocommerce-product-slider' ); ?></p>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Register meta boxes for slider configuration.
 	 *
 	 * @since 1.0.0
 	 */
 	public function add_meta_boxes() {
+		// Render header banner.
+		add_action( 'edit_form_after_title', array( $this, 'render_admin_header' ) );
+
 		add_meta_box(
 			'wc_product_slider_products',
 			__( 'Products', 'woocommerce-product-slider' ),
 			array( $this, 'render_products_meta_box' ),
 			'wc_product_slider',
 			'normal',
-			'high'
+			'high',
+			array( '__back_compat_meta_box' => false )
 		);
 
 		add_meta_box(
@@ -151,7 +188,8 @@ class WC_Product_Slider_Admin {
 			array( $this, 'render_design_meta_box' ),
 			'wc_product_slider',
 			'normal',
-			'default'
+			'default',
+			array( '__back_compat_meta_box' => false )
 		);
 
 		add_meta_box(
@@ -160,7 +198,8 @@ class WC_Product_Slider_Admin {
 			array( $this, 'render_behavior_meta_box' ),
 			'wc_product_slider',
 			'side',
-			'default'
+			'default',
+			array( '__back_compat_meta_box' => false )
 		);
 
 		add_meta_box(
@@ -169,7 +208,8 @@ class WC_Product_Slider_Admin {
 			array( $this, 'render_shortcode_meta_box' ),
 			'wc_product_slider',
 			'side',
-			'high'
+			'high',
+			array( '__back_compat_meta_box' => false )
 		);
 
 		add_meta_box(
@@ -178,7 +218,8 @@ class WC_Product_Slider_Admin {
 			array( $this, 'render_custom_css_meta_box' ),
 			'wc_product_slider',
 			'normal',
-			'low'
+			'low',
+			array( '__back_compat_meta_box' => false )
 		);
 
 		add_meta_box(
@@ -187,7 +228,8 @@ class WC_Product_Slider_Admin {
 			array( $this, 'render_display_options_meta_box' ),
 			'wc_product_slider',
 			'side',
-			'default'
+			'default',
+			array( '__back_compat_meta_box' => false )
 		);
 
 		add_meta_box(
@@ -196,8 +238,30 @@ class WC_Product_Slider_Admin {
 			array( $this, 'render_custom_slides_meta_box' ),
 			'wc_product_slider',
 			'normal',
-			'default'
+			'default',
+			array( '__back_compat_meta_box' => false )
 		);
+
+		// Add custom CSS classes to metaboxes.
+		add_filter( 'postbox_classes_wc_product_slider_wc_product_slider_products', array( $this, 'add_metabox_classes' ) );
+		add_filter( 'postbox_classes_wc_product_slider_wc_product_slider_design', array( $this, 'add_metabox_classes' ) );
+		add_filter( 'postbox_classes_wc_product_slider_wc_product_slider_behavior', array( $this, 'add_metabox_classes' ) );
+		add_filter( 'postbox_classes_wc_product_slider_wc_product_slider_shortcode', array( $this, 'add_metabox_classes' ) );
+		add_filter( 'postbox_classes_wc_product_slider_wc_product_slider_custom_css', array( $this, 'add_metabox_classes' ) );
+		add_filter( 'postbox_classes_wc_product_slider_wc_product_slider_display_options', array( $this, 'add_metabox_classes' ) );
+		add_filter( 'postbox_classes_wc_product_slider_wc_product_slider_custom_slides', array( $this, 'add_metabox_classes' ) );
+	}
+
+	/**
+	 * Add custom CSS classes to metaboxes.
+	 *
+	 * @since 1.0.0
+	 * @param array $classes Existing classes.
+	 * @return array Modified classes.
+	 */
+	public function add_metabox_classes( $classes ) {
+		$classes[] = 'wc-ps-metabox';
+		return $classes;
 	}
 
 	/**
@@ -225,7 +289,13 @@ class WC_Product_Slider_Admin {
 		);
 
 		?>
-		<p><?php esc_html_e( 'Select products to display in this slider.', 'woocommerce-product-slider' ); ?></p>
+		<div class="wc-ps-help-box">
+			<span class="dashicons dashicons-info"></span>
+			<div>
+				<strong><?php esc_html_e( 'Select Your Products', 'woocommerce-product-slider' ); ?></strong>
+				<p><?php esc_html_e( 'Choose which WooCommerce products you want to display in this slider. You can combine them with custom slides in the Custom Slides section below.', 'woocommerce-product-slider' ); ?></p>
+			</div>
+		</div>
 		<select name="wc_ps_products[]" id="wc_ps_products" multiple="multiple" style="width:100%; min-height:200px;">
 			<?php foreach ( $products as $product ) : ?>
 				<option value="<?php echo esc_attr( $product->get_id() ); ?>"
@@ -235,13 +305,13 @@ class WC_Product_Slider_Admin {
 			<?php endforeach; ?>
 		</select>
 		<p class="description">
-			<?php esc_html_e( 'Hold Ctrl (Cmd on Mac) to select multiple products.', 'woocommerce-product-slider' ); ?>
+			<?php esc_html_e( 'Use the search box to quickly find products. You can select multiple products at once.', 'woocommerce-product-slider' ); ?>
 		</p>
 		<script>
 		jQuery(document).ready(function($) {
 			if (typeof $.fn.select2 !== 'undefined') {
 				$('#wc_ps_products').select2({
-					placeholder: '<?php esc_attr_e( 'Select products...', 'woocommerce-product-slider' ); ?>',
+					placeholder: '<?php esc_attr_e( 'Search and select products...', 'woocommerce-product-slider' ); ?>',
 					width: '100%'
 				});
 			}
@@ -286,6 +356,13 @@ class WC_Product_Slider_Admin {
 			$slide_gap = '20';
 		}
 		?>
+		<div class="wc-ps-help-box">
+			<span class="dashicons dashicons-art"></span>
+			<div>
+				<strong><?php esc_html_e( 'Design & Colors', 'woocommerce-product-slider' ); ?></strong>
+				<p><?php esc_html_e( 'Customize the colors, spacing, and visual appearance of your slider to match your brand.', 'woocommerce-product-slider' ); ?></p>
+			</div>
+		</div>
 		<table class="form-table">
 			<tr>
 				<th><label for="wc_ps_primary_color"><?php esc_html_e( 'Primary Color:', 'woocommerce-product-slider' ); ?></label></th>
@@ -332,6 +409,13 @@ class WC_Product_Slider_Admin {
 			$speed = 3000;
 		}
 		?>
+		<div class="wc-ps-help-box">
+			<span class="dashicons dashicons-controls-play"></span>
+			<div>
+				<strong><?php esc_html_e( 'Animation Settings', 'woocommerce-product-slider' ); ?></strong>
+				<p><?php esc_html_e( 'Configure how your slider behaves and animates.', 'woocommerce-product-slider' ); ?></p>
+			</div>
+		</div>
 		<p>
 			<label>
 				<input type="checkbox" name="wc_ps_autoplay" value="1" <?php checked( $autoplay, '1' ); ?> />
@@ -433,6 +517,13 @@ class WC_Product_Slider_Admin {
 			$clickable_image = '1';
 		}
 		?>
+		<div class="wc-ps-help-box">
+			<span class="dashicons dashicons-visibility"></span>
+			<div>
+				<strong><?php esc_html_e( 'Customize Display', 'woocommerce-product-slider' ); ?></strong>
+				<p><?php esc_html_e( 'Control which elements appear on your slider and configure their behavior.', 'woocommerce-product-slider' ); ?></p>
+			</div>
+		</div>
 		<p>
 			<label for="wc_ps_slider_heading">
 				<?php esc_html_e( 'Slider Heading:', 'woocommerce-product-slider' ); ?>
@@ -512,9 +603,13 @@ class WC_Product_Slider_Admin {
 
 		?>
 		<div id="wc-ps-custom-slides-container">
-			<p class="description">
-				<?php esc_html_e( 'Add custom images with URLs. These will be added to the slider along with selected products.', 'woocommerce-product-slider' ); ?>
-			</p>
+			<div class="wc-ps-help-box">
+				<span class="dashicons dashicons-images-alt2"></span>
+				<div>
+					<strong><?php esc_html_e( 'Add Custom Slides', 'woocommerce-product-slider' ); ?></strong>
+					<p><?php esc_html_e( 'Create promotional slides with custom images and links. These slides will be mixed with your selected products to create an engaging slider experience.', 'woocommerce-product-slider' ); ?></p>
+				</div>
+			</div>
 
 			<div id="wc-ps-custom-slides-list">
 				<?php
@@ -683,21 +778,40 @@ class WC_Product_Slider_Admin {
 		}
 
 		?>
-		<p class="description">
-			<?php esc_html_e( 'Add custom CSS to style this slider. CSS will be wrapped with a unique slider class.', 'woocommerce-product-slider' ); ?>
-		</p>
-		<textarea name="wc_ps_custom_css" id="wc_ps_custom_css" rows="10" style="width:100%; font-family:monospace;"><?php echo esc_textarea( $custom_css ); ?></textarea>
+		<div class="wc-ps-help-box">
+			<span class="dashicons dashicons-editor-code"></span>
+			<div>
+				<strong><?php esc_html_e( 'Custom Styling', 'woocommerce-product-slider' ); ?></strong>
+				<p><?php esc_html_e( 'Add your own CSS to customize the appearance of this slider. Your CSS will be automatically scoped to only affect this slider.', 'woocommerce-product-slider' ); ?></p>
+			</div>
+		</div>
+		<div class="wc-ps-css-editor-wrapper">
+			<div class="wc-ps-css-editor-header">
+				<span>custom-styles.css</span>
+			</div>
+			<textarea name="wc_ps_custom_css" id="wc_ps_custom_css" rows="10" style="width:100%; font-family:monospace; display:none;"><?php echo esc_textarea( $custom_css ); ?></textarea>
+		</div>
 		<script>
 		jQuery(document).ready(function($) {
 			if (typeof wp !== 'undefined' && typeof wp.codeEditor !== 'undefined') {
-				wp.codeEditor.initialize('wc_ps_custom_css', {
-					type: 'text/css',
-					codemirror: {
+				var editorSettings = wp.codeEditor.defaultSettings ? _.clone(wp.codeEditor.defaultSettings) : {};
+				editorSettings.codemirror = _.extend(
+					{},
+					editorSettings.codemirror,
+					{
 						indentUnit: 2,
 						tabSize: 2,
-						mode: 'css'
+						mode: 'css',
+						theme: 'default',
+						lineNumbers: true,
+						lineWrapping: true,
+						styleActiveLine: true,
+						matchBrackets: true,
+						autoCloseBrackets: true
 					}
-				});
+				);
+				var editor = wp.codeEditor.initialize('wc_ps_custom_css', editorSettings);
+				$('#wc_ps_custom_css').show();
 			}
 		});
 		</script>
