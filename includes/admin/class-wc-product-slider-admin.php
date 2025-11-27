@@ -844,10 +844,13 @@ class WC_Product_Slider_Admin {
 		if ( isset( $_POST['wc_product_slider_products_nonce'] ) &&
 			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wc_product_slider_products_nonce'] ) ), 'wc_product_slider_save_products' ) ) {
 
-			if ( isset( $_POST['wc_ps_products'] ) ) {
-				$products       = sanitize_text_field( wp_unslash( $_POST['wc_ps_products'] ) );
-				$products_array = array_filter( array_map( 'absint', explode( ',', $products ) ) );
+			if ( isset( $_POST['wc_ps_products'] ) && is_array( $_POST['wc_ps_products'] ) ) {
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized via array_map absint below.
+				$products_array = array_filter( array_map( 'absint', wp_unslash( $_POST['wc_ps_products'] ) ) );
 				update_post_meta( $post_id, '_wc_ps_products', $products_array );
+			} else {
+				// If no products selected, save empty array.
+				update_post_meta( $post_id, '_wc_ps_products', array() );
 			}
 		}
 

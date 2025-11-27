@@ -65,19 +65,23 @@ class WC_Product_Slider_Shortcode {
 		// Get slider configuration.
 		$config = $this->get_slider_config( $slider_id );
 
-		if ( empty( $config['products'] ) ) {
-			return $this->render_error( __( 'No products selected for this slider.', 'woocommerce-product-slider' ) );
+		// Validate that we have either products or custom slides.
+		if ( empty( $config['products'] ) && empty( $config['custom_slides'] ) ) {
+			return $this->render_error( __( 'No products or custom slides selected for this slider.', 'woocommerce-product-slider' ) );
 		}
 
 		// Get WooCommerce products.
 		$products = $this->get_products( $config['products'] );
 
-		if ( empty( $products ) ) {
-			return $this->render_error( __( 'No valid products found.', 'woocommerce-product-slider' ) );
+		// Merge products and custom slides into a single slides array.
+		$slides = $this->merge_slides( $products, $config['custom_slides'] );
+
+		if ( empty( $slides ) ) {
+			return $this->render_error( __( 'No valid slides found.', 'woocommerce-product-slider' ) );
 		}
 
 		// Render slider HTML.
-		return $this->render_slider( $slider_id, $products, $config );
+		return $this->render_slider( $slider_id, $slides, $config );
 	}
 
 	/**
@@ -89,19 +93,41 @@ class WC_Product_Slider_Shortcode {
 	 */
 	protected function get_slider_config( $slider_id ) {
 		$products        = get_post_meta( $slider_id, '_wc_ps_products', true );
+		$custom_slides   = get_post_meta( $slider_id, '_wc_ps_custom_slides', true );
 		$primary_color   = get_post_meta( $slider_id, '_wc_ps_primary_color', true );
 		$secondary_color = get_post_meta( $slider_id, '_wc_ps_secondary_color', true );
 		$speed           = absint( get_post_meta( $slider_id, '_wc_ps_speed', true ) );
 		$custom_css      = get_post_meta( $slider_id, '_wc_ps_custom_css', true );
 
+		// Get display options.
+		$show_title       = get_post_meta( $slider_id, '_wc_ps_show_title', true );
+		$show_price       = get_post_meta( $slider_id, '_wc_ps_show_price', true );
+		$show_description = get_post_meta( $slider_id, '_wc_ps_show_description', true );
+		$show_button      = get_post_meta( $slider_id, '_wc_ps_show_button', true );
+		$show_image       = get_post_meta( $slider_id, '_wc_ps_show_image', true );
+		$show_rating      = get_post_meta( $slider_id, '_wc_ps_show_rating', true );
+		$button_text      = get_post_meta( $slider_id, '_wc_ps_button_text', true );
+		$slider_heading   = get_post_meta( $slider_id, '_wc_ps_slider_heading', true );
+		$clickable_image  = get_post_meta( $slider_id, '_wc_ps_clickable_image', true );
+
 		return array(
-			'products'        => ! empty( $products ) ? $products : array(),
-			'primary_color'   => ! empty( $primary_color ) ? $primary_color : '#000000',
-			'secondary_color' => ! empty( $secondary_color ) ? $secondary_color : '#ffffff',
-			'autoplay'        => get_post_meta( $slider_id, '_wc_ps_autoplay', true ) === '1',
-			'loop'            => get_post_meta( $slider_id, '_wc_ps_loop', true ) === '1',
-			'speed'           => ! empty( $speed ) ? $speed : 3000,
-			'custom_css'      => ! empty( $custom_css ) ? $custom_css : '',
+			'products'         => ! empty( $products ) ? $products : array(),
+			'custom_slides'    => ! empty( $custom_slides ) ? $custom_slides : array(),
+			'primary_color'    => ! empty( $primary_color ) ? $primary_color : '#000000',
+			'secondary_color'  => ! empty( $secondary_color ) ? $secondary_color : '#ffffff',
+			'autoplay'         => get_post_meta( $slider_id, '_wc_ps_autoplay', true ) === '1',
+			'loop'             => get_post_meta( $slider_id, '_wc_ps_loop', true ) === '1',
+			'speed'            => ! empty( $speed ) ? $speed : 3000,
+			'custom_css'       => ! empty( $custom_css ) ? $custom_css : '',
+			'show_title'       => $show_title !== '0',
+			'show_price'       => $show_price !== '0',
+			'show_description' => $show_description === '1',
+			'show_button'      => $show_button !== '0',
+			'show_image'       => $show_image !== '0',
+			'show_rating'      => $show_rating === '1',
+			'button_text'      => ! empty( $button_text ) ? $button_text : __( 'View Product', 'woocommerce-product-slider' ),
+			'slider_heading'   => ! empty( $slider_heading ) ? $slider_heading : '',
+			'clickable_image'  => $clickable_image !== '0',
 		);
 	}
 
@@ -131,15 +157,45 @@ class WC_Product_Slider_Shortcode {
 	}
 
 	/**
+	 * Merge WooCommerce products and custom slides into a single array.
+	 *
+	 * @since 1.0.0
+	 * @param array $products      Array of WC_Product objects.
+	 * @param array $custom_slides Array of custom slide data.
+	 * @return array Merged array of slides with type indicators.
+	 */
+	protected function merge_slides( $products, $custom_slides ) {
+		$slides = array();
+
+		// Add WooCommerce products.
+		foreach ( $products as $product ) {
+			$slides[] = array(
+				'type' => 'product',
+				'data' => $product,
+			);
+		}
+
+		// Add custom slides.
+		foreach ( $custom_slides as $slide ) {
+			$slides[] = array(
+				'type' => 'custom',
+				'data' => $slide,
+			);
+		}
+
+		return $slides;
+	}
+
+	/**
 	 * Render slider HTML.
 	 *
 	 * @since 1.0.0
 	 * @param int   $slider_id Slider post ID.
-	 * @param array $products  Array of WC_Product objects.
+	 * @param array $slides    Array of slides (products and custom slides).
 	 * @param array $config    Slider configuration.
 	 * @return string Rendered slider HTML.
 	 */
-	protected function render_slider( $slider_id, $products, $config ) {
+	protected function render_slider( $slider_id, $slides, $config ) {
 		// Start output buffering.
 		ob_start();
 
@@ -151,65 +207,20 @@ class WC_Product_Slider_Shortcode {
 		// Render slider container.
 		?>
 		<div class="wc-ps-slider wc-ps-slider-<?php echo esc_attr( $slider_id ); ?>" data-slider-id="<?php echo esc_attr( $slider_id ); ?>">
+			<?php if ( ! empty( $config['slider_heading'] ) ) : ?>
+				<h2 class="wc-ps-slider-heading"><?php echo esc_html( $config['slider_heading'] ); ?></h2>
+			<?php endif; ?>
 			<div class="swiper" data-config='<?php echo esc_attr( wp_json_encode( $this->get_swiper_config( $config ) ) ); ?>'>
 				<div class="swiper-wrapper">
-					<?php foreach ( $products as $product ) : ?>
+					<?php foreach ( $slides as $slide ) : ?>
 						<div class="swiper-slide">
-							<div class="wc-ps-product">
-								<a href="<?php echo esc_url( $product->get_permalink() ); ?>" class="wc-ps-product-link">
-									<?php
-									// Product image.
-									$image_id = $product->get_image_id();
-									if ( $image_id ) {
-										echo wp_get_attachment_image(
-											$image_id,
-											'woocommerce_thumbnail',
-											false,
-											array(
-												'class' => 'wc-ps-product-image',
-												'alt'   => $product->get_name(),
-											)
-										);
-									} else {
-										// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WooCommerce core function with built-in escaping.
-										echo wc_placeholder_img( 'woocommerce_thumbnail', array( 'class' => 'wc-ps-product-image' ) );
-									}
-									?>
-
-									<div class="wc-ps-product-info">
-										<h3 class="wc-ps-product-title"><?php echo esc_html( $product->get_name() ); ?></h3>
-
-										<div class="wc-ps-product-price">
-											<?php echo wp_kses_post( $product->get_price_html() ); ?>
-										</div>
-
-										<?php if ( $product->is_on_sale() ) : ?>
-											<span class="wc-ps-product-badge wc-ps-product-badge-sale">
-												<?php esc_html_e( 'Sale!', 'woocommerce-product-slider' ); ?>
-											</span>
-										<?php endif; ?>
-
-										<div class="wc-ps-product-actions">
-											<?php
-											// Add to cart button.
-											// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-											echo apply_filters( // woocommerce_ core hook.
-												'woocommerce_loop_add_to_cart_link',
-												sprintf(
-													'<a href="%s" data-product_id="%s" class="button product_type_%s">%s</a>',
-													esc_url( $product->add_to_cart_url() ),
-													esc_attr( $product->get_id() ),
-													esc_attr( $product->get_type() ),
-													esc_html( $product->add_to_cart_text() )
-												),
-												$product
-											);
-											// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-											?>
-										</div>
-									</div>
-								</a>
-							</div>
+							<?php
+							if ( 'product' === $slide['type'] ) {
+								$this->render_product_slide( $slide['data'], $config );
+							} elseif ( 'custom' === $slide['type'] ) {
+								$this->render_custom_slide( $slide['data'], $config );
+							}
+							?>
 						</div>
 					<?php endforeach; ?>
 				</div>
@@ -226,6 +237,122 @@ class WC_Product_Slider_Shortcode {
 
 		// Return buffered content.
 		return ob_get_clean();
+	}
+
+	/**
+	 * Render a product slide.
+	 *
+	 * @since 1.0.0
+	 * @param \WC_Product $product WooCommerce product object.
+	 * @param array       $config  Slider configuration.
+	 */
+	protected function render_product_slide( $product, $config ) {
+		?>
+		<div class="wc-ps-product">
+			<?php
+			$link_url      = $product->get_permalink();
+			$clickable     = $config['clickable_image'];
+			$wrapper_tag   = $clickable ? 'a' : 'div';
+			$wrapper_attrs = $clickable ? 'href="' . esc_url( $link_url ) . '" class="wc-ps-product-link"' : 'class="wc-ps-product-content"';
+			?>
+			<<?php echo esc_attr( $wrapper_tag ); ?> <?php echo $wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above. ?>>
+				<?php if ( $config['show_image'] ) : ?>
+					<?php
+					// Product image.
+					$image_id = $product->get_image_id();
+					if ( $image_id ) {
+						echo wp_get_attachment_image(
+							$image_id,
+							'woocommerce_thumbnail',
+							false,
+							array(
+								'class' => 'wc-ps-product-image',
+								'alt'   => $product->get_name(),
+							)
+						);
+					} else {
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WooCommerce core function with built-in escaping.
+						echo wc_placeholder_img( 'woocommerce_thumbnail', array( 'class' => 'wc-ps-product-image' ) );
+					}
+					?>
+				<?php endif; ?>
+
+				<div class="wc-ps-product-info">
+					<?php if ( $config['show_title'] ) : ?>
+						<h3 class="wc-ps-product-title"><?php echo esc_html( $product->get_name() ); ?></h3>
+					<?php endif; ?>
+
+					<?php if ( $config['show_price'] ) : ?>
+						<div class="wc-ps-product-price">
+							<?php echo wp_kses_post( $product->get_price_html() ); ?>
+						</div>
+					<?php endif; ?>
+
+					<?php if ( $config['show_rating'] && $product->get_average_rating() > 0 ) : ?>
+						<div class="wc-ps-product-rating">
+							<?php echo wc_get_rating_html( $product->get_average_rating() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WooCommerce core function. ?>
+						</div>
+					<?php endif; ?>
+
+					<?php if ( $config['show_description'] && $product->get_short_description() ) : ?>
+						<div class="wc-ps-product-description">
+							<?php echo wp_kses_post( $product->get_short_description() ); ?>
+						</div>
+					<?php endif; ?>
+
+					<?php if ( $product->is_on_sale() ) : ?>
+						<span class="wc-ps-product-badge wc-ps-product-badge-sale">
+							<?php esc_html_e( 'Sale!', 'woocommerce-product-slider' ); ?>
+						</span>
+					<?php endif; ?>
+
+					<?php if ( $config['show_button'] ) : ?>
+						<div class="wc-ps-product-actions">
+							<a href="<?php echo esc_url( $link_url ); ?>" class="button wc-ps-view-product">
+								<?php echo esc_html( $config['button_text'] ); ?>
+							</a>
+						</div>
+					<?php endif; ?>
+				</div>
+			</<?php echo esc_attr( $wrapper_tag ); ?>>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render a custom slide.
+	 *
+	 * @since 1.0.0
+	 * @param array $slide  Custom slide data.
+	 * @param array $config Slider configuration.
+	 */
+	protected function render_custom_slide( $slide, $config ) {
+		$image_id = isset( $slide['image_id'] ) ? absint( $slide['image_id'] ) : 0;
+		$url      = isset( $slide['url'] ) ? esc_url( $slide['url'] ) : '';
+		$title    = isset( $slide['title'] ) ? esc_html( $slide['title'] ) : '';
+
+		if ( ! $image_id ) {
+			return;
+		}
+
+		$image_url = wp_get_attachment_url( $image_id );
+		if ( ! $image_url ) {
+			return;
+		}
+
+		$clickable     = $config['clickable_image'] && ! empty( $url );
+		$wrapper_tag   = $clickable ? 'a' : 'div';
+		$wrapper_attrs = $clickable ? 'href="' . esc_url( $url ) . '" class="wc-ps-custom-slide-link"' : 'class="wc-ps-custom-slide-content"';
+		?>
+		<div class="wc-ps-custom-slide">
+			<<?php echo esc_attr( $wrapper_tag ); ?> <?php echo $wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above. ?>>
+				<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $title ); ?>" class="wc-ps-custom-slide-image" />
+				<?php if ( ! empty( $title ) ) : ?>
+					<div class="wc-ps-custom-slide-title"><?php echo esc_html( $title ); ?></div>
+				<?php endif; ?>
+			</<?php echo esc_attr( $wrapper_tag ); ?>>
+		</div>
+		<?php
 	}
 
 	/**
