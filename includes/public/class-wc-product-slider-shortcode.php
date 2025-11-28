@@ -100,6 +100,8 @@ class WC_Product_Slider_Shortcode {
 		$button_text_color = get_post_meta( $slider_id, '_wc_ps_button_text_color', true );
 		$speed             = absint( get_post_meta( $slider_id, '_wc_ps_speed', true ) );
 		$custom_css        = get_post_meta( $slider_id, '_wc_ps_custom_css', true );
+		$border_radius     = get_post_meta( $slider_id, '_wc_ps_border_radius', true );
+		$slide_gap         = get_post_meta( $slider_id, '_wc_ps_slide_gap', true );
 
 		// Get display options.
 		$show_title       = get_post_meta( $slider_id, '_wc_ps_show_title', true );
@@ -119,6 +121,8 @@ class WC_Product_Slider_Shortcode {
 			'secondary_color'   => ! empty( $secondary_color ) ? $secondary_color : '#ffffff',
 			'button_color'      => ! empty( $button_color ) ? $button_color : '#0073aa',
 			'button_text_color' => ! empty( $button_text_color ) ? $button_text_color : '#ffffff',
+			'border_radius'     => ! empty( $border_radius ) ? absint( $border_radius ) : 8,
+			'slide_gap'         => ! empty( $slide_gap ) ? absint( $slide_gap ) : 20,
 			'autoplay'          => get_post_meta( $slider_id, '_wc_ps_autoplay', true ) === '1',
 			'loop'              => get_post_meta( $slider_id, '_wc_ps_loop', true ) === '1',
 			'speed'             => ! empty( $speed ) ? $speed : 3000,
@@ -209,10 +213,12 @@ class WC_Product_Slider_Shortcode {
 			echo '<style type="text/css">' . esc_html( $config['custom_css'] ) . '</style>';
 		}
 
-		// Add color customization inline styles.
+		// Add color and design customization inline styles.
 		$button_color       = ! empty( $config['button_color'] ) ? $config['button_color'] : '#0073aa';
 		$button_text_color  = ! empty( $config['button_text_color'] ) ? $config['button_text_color'] : '#ffffff';
 		$button_hover_color = $this->darken_color( $button_color, 15 );
+		$primary_color      = ! empty( $config['primary_color'] ) ? $config['primary_color'] : '#000000';
+		$border_radius      = isset( $config['border_radius'] ) ? absint( $config['border_radius'] ) : 8;
 
 		printf(
 			'<style type="text/css">
@@ -227,11 +233,23 @@ class WC_Product_Slider_Shortcode {
 					background-color: %4$s !important;
 					border-color: %4$s !important;
 				}
+				.wc-ps-slider-%1$s .wc-ps-product {
+					border-radius: %5$spx !important;
+				}
+				.wc-ps-slider-%1$s .swiper-button-prev::after,
+				.wc-ps-slider-%1$s .swiper-button-next::after {
+					color: %6$s !important;
+				}
+				.wc-ps-slider-%1$s .swiper-pagination-bullet-active {
+					background-color: %6$s !important;
+				}
 			</style>',
 			esc_attr( $slider_id ),
 			esc_attr( $button_color ),
 			esc_attr( $button_text_color ),
-			esc_attr( $button_hover_color )
+			esc_attr( $button_hover_color ),
+			esc_attr( $border_radius ),
+			esc_attr( $primary_color )
 		);
 
 		// Render slider container.
@@ -240,7 +258,7 @@ class WC_Product_Slider_Shortcode {
 			<?php if ( ! empty( $config['slider_heading'] ) ) : ?>
 				<h2 class="wc-ps-slider-heading"><?php echo esc_html( $config['slider_heading'] ); ?></h2>
 			<?php endif; ?>
-			<div class="swiper" data-config='<?php echo esc_attr( wp_json_encode( $this->get_swiper_config( $config ) ) ); ?>' style="--swiper-navigation-color: <?php echo esc_attr( $config['primary_color'] ); ?>; --swiper-pagination-color: <?php echo esc_attr( $config['primary_color'] ); ?>;">
+			<div class="swiper" data-config='<?php echo esc_attr( wp_json_encode( $this->get_swiper_config( $config ) ) ); ?>'>
 				<div class="swiper-wrapper">
 					<?php foreach ( $slides as $slide ) : ?>
 						<div class="swiper-slide">
@@ -393,9 +411,11 @@ class WC_Product_Slider_Shortcode {
 	 * @return array Swiper configuration array.
 	 */
 	protected function get_swiper_config( $config ) {
+		$slide_gap = isset( $config['slide_gap'] ) ? absint( $config['slide_gap'] ) : 20;
+
 		return array(
 			'slidesPerView' => 1,
-			'spaceBetween'  => 20,
+			'spaceBetween'  => $slide_gap,
 			'loop'          => $config['loop'],
 			'autoplay'      => $config['autoplay'] ? array(
 				'delay'                => $config['speed'],
@@ -412,15 +432,15 @@ class WC_Product_Slider_Shortcode {
 			'breakpoints'   => array(
 				640  => array(
 					'slidesPerView' => 2,
-					'spaceBetween'  => 20,
+					'spaceBetween'  => $slide_gap,
 				),
 				768  => array(
 					'slidesPerView' => 3,
-					'spaceBetween'  => 30,
+					'spaceBetween'  => $slide_gap,
 				),
 				1024 => array(
 					'slidesPerView' => 4,
-					'spaceBetween'  => 40,
+					'spaceBetween'  => $slide_gap,
 				),
 			),
 		);

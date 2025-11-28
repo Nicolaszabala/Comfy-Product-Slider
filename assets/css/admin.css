@@ -118,10 +118,12 @@
 
 .postbox.wc-ps-metabox .postbox-header h2::before {
     content: '';
+    display: inline-block;
     width: 4px;
     height: 20px;
     background: var(--wc-ps-secondary);
     border-radius: 2px;
+    vertical-align: middle;
 }
 
 .postbox.wc-ps-metabox .inside {
