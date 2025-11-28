@@ -22,8 +22,7 @@
     background: linear-gradient(135deg, var(--wc-ps-primary) 0%, var(--wc-ps-secondary) 100%);
     color: var(--wc-ps-white);
     padding: 30px;
-    margin: 20px 0 30px -20px;
-    margin-right: -20px;
+    margin: 20px 0 30px 0;
     border-radius: 8px;
     box-shadow: 0 4px 12px var(--wc-ps-shadow);
     position: relative;
@@ -176,10 +175,12 @@
     gap: 10px;
     margin-top: 15px;
     align-items: stretch;
+    flex-wrap: nowrap;
 }
 
 .wc-ps-shortcode-input {
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 0;
     padding: 12px 15px;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     font-size: 14px;
@@ -198,6 +199,7 @@
 }
 
 .wc-ps-copy-shortcode {
+    flex: 0 0 auto;
     white-space: nowrap;
     background: var(--wc-ps-primary);
     color: var(--wc-ps-white);
@@ -352,20 +354,10 @@ input[type="checkbox"]:checked {
     gap: 10px;
 }
 
-.wc-ps-css-editor-header::before {
-    content: '';
-    width: 12px;
-    height: 12px;
-    background: #ff5f56;
-    border-radius: 50%;
-    box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f;
-}
-
 .wc-ps-css-editor-header span {
     color: #d4d4d4;
     font-size: 12px;
     font-family: monospace;
-    margin-left: 10px;
 }
 
 .CodeMirror {

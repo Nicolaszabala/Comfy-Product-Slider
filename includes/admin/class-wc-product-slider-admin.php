@@ -144,14 +144,26 @@ class WC_Product_Slider_Admin {
 		<div class="wc-ps-admin-header">
 			<div class="wc-ps-header-content">
 				<div class="wc-ps-logo">
-					<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path d="M3 12L7 8L11 12L15 8L19 12L23 8" stroke="#0073AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-						<rect x="2" y="4" width="4" height="4" rx="1" fill="#00A0D2"/>
-						<rect x="10" y="4" width="4" height="4" rx="1" fill="#0073AA"/>
-						<rect x="18" y="4" width="4" height="4" rx="1" fill="#00A0D2"/>
-						<rect x="2" y="16" width="4" height="4" rx="1" fill="#0073AA"/>
-						<rect x="10" y="16" width="4" height="4" rx="1" fill="#00A0D2"/>
-						<rect x="18" y="16" width="4" height="4" rx="1" fill="#0073AA"/>
+					<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<!-- Cafetera / Coffee Maker -->
+						<!-- Base -->
+						<rect x="12" y="38" width="24" height="6" rx="2" fill="#0073AA"/>
+						<!-- Cuerpo principal -->
+						<path d="M14 20 C14 18 15 16 17 16 H31 C33 16 34 18 34 20 L34 38 H14 Z" fill="#00A0D2"/>
+						<!-- Ventana de agua -->
+						<rect x="16" y="20" width="16" height="14" rx="2" fill="#E5F5FA" opacity="0.8"/>
+						<!-- Nivel de agua -->
+						<rect x="18" y="26" width="12" height="6" rx="1" fill="#0073AA" opacity="0.5"/>
+						<!-- Manija -->
+						<path d="M34 22 C36 22 38 23 38 25 C38 27 36 28 34 28" stroke="#0073AA" stroke-width="2" fill="none" stroke-linecap="round"/>
+						<!-- Tapa -->
+						<ellipse cx="24" cy="16" rx="8" ry="2" fill="#0073AA"/>
+						<!-- Pico -->
+						<path d="M12 26 L8 28 L12 30" fill="#00A0D2"/>
+						<!-- Vapor -->
+						<path d="M20 10 C20 8 20 6 20 6" stroke="#00A0D2" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+						<path d="M24 8 C24 6 24 4 24 4" stroke="#0073AA" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+						<path d="M28 10 C28 8 28 6 28 6" stroke="#00A0D2" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
 					</svg>
 				</div>
 				<div class="wc-ps-header-text">
@@ -789,7 +801,7 @@ class WC_Product_Slider_Admin {
 			<div class="wc-ps-css-editor-header">
 				<span>custom-styles.css</span>
 			</div>
-			<textarea name="wc_ps_custom_css" id="wc_ps_custom_css" rows="10" style="width:100%; font-family:monospace; display:none;"><?php echo esc_textarea( $custom_css ); ?></textarea>
+			<textarea name="wc_ps_custom_css" id="wc_ps_custom_css" rows="10" style="width:100%; font-family:monospace;"><?php echo esc_textarea( $custom_css ); ?></textarea>
 		</div>
 		<script>
 		jQuery(document).ready(function($) {
@@ -810,8 +822,15 @@ class WC_Product_Slider_Admin {
 						autoCloseBrackets: true
 					}
 				);
-				var editor = wp.codeEditor.initialize('wc_ps_custom_css', editorSettings);
-				$('#wc_ps_custom_css').show();
+				wp.codeEditor.initialize('wc_ps_custom_css', editorSettings);
+			} else {
+				// Fallback: if CodeMirror is not available, show plain textarea with better styling
+				$('#wc_ps_custom_css').css({
+					'border': '1px solid #ddd',
+					'padding': '10px',
+					'background-color': '#f9f9f9',
+					'border-radius': '4px'
+				});
 			}
 		});
 		</script>
@@ -946,7 +965,9 @@ class WC_Product_Slider_Admin {
 			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wc_product_slider_custom_css_nonce'] ) ), 'wc_product_slider_save_custom_css' ) ) {
 
 			if ( isset( $_POST['wc_ps_custom_css'] ) ) {
-				$custom_css = wp_strip_all_tags( wp_unslash( $_POST['wc_ps_custom_css'] ) );
+				// Sanitize CSS: strip tags but preserve CSS syntax (braces, colons, semicolons, etc).
+				// Using wp_kses with no allowed tags strips HTML but keeps CSS intact.
+				$custom_css = wp_kses( wp_unslash( $_POST['wc_ps_custom_css'] ), array() );
 				update_post_meta( $post_id, '_wc_ps_custom_css', $custom_css );
 			}
 		}

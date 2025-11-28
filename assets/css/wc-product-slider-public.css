@@ -10,6 +10,18 @@
 	position: relative;
 }
 
+/* Prevent FOUC - hide until Swiper initializes */
+.wc-ps-slider .swiper:not(.swiper-initialized) {
+	opacity: 0;
+	visibility: hidden;
+}
+
+.wc-ps-slider .swiper.swiper-initialized {
+	opacity: 1;
+	visibility: visible;
+	transition: opacity 0.3s ease-in-out;
+}
+
 .wc-ps-slider .swiper {
 	width: 100%;
 	padding: 10px 50px 40px;

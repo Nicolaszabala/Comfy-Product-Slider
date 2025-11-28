@@ -92,12 +92,14 @@ class WC_Product_Slider_Shortcode {
 	 * @return array Slider configuration.
 	 */
 	protected function get_slider_config( $slider_id ) {
-		$products        = get_post_meta( $slider_id, '_wc_ps_products', true );
-		$custom_slides   = get_post_meta( $slider_id, '_wc_ps_custom_slides', true );
-		$primary_color   = get_post_meta( $slider_id, '_wc_ps_primary_color', true );
-		$secondary_color = get_post_meta( $slider_id, '_wc_ps_secondary_color', true );
-		$speed           = absint( get_post_meta( $slider_id, '_wc_ps_speed', true ) );
-		$custom_css      = get_post_meta( $slider_id, '_wc_ps_custom_css', true );
+		$products          = get_post_meta( $slider_id, '_wc_ps_products', true );
+		$custom_slides     = get_post_meta( $slider_id, '_wc_ps_custom_slides', true );
+		$primary_color     = get_post_meta( $slider_id, '_wc_ps_primary_color', true );
+		$secondary_color   = get_post_meta( $slider_id, '_wc_ps_secondary_color', true );
+		$button_color      = get_post_meta( $slider_id, '_wc_ps_button_color', true );
+		$button_text_color = get_post_meta( $slider_id, '_wc_ps_button_text_color', true );
+		$speed             = absint( get_post_meta( $slider_id, '_wc_ps_speed', true ) );
+		$custom_css        = get_post_meta( $slider_id, '_wc_ps_custom_css', true );
 
 		// Get display options.
 		$show_title       = get_post_meta( $slider_id, '_wc_ps_show_title', true );
@@ -111,23 +113,25 @@ class WC_Product_Slider_Shortcode {
 		$clickable_image  = get_post_meta( $slider_id, '_wc_ps_clickable_image', true );
 
 		return array(
-			'products'         => ! empty( $products ) ? $products : array(),
-			'custom_slides'    => ! empty( $custom_slides ) ? $custom_slides : array(),
-			'primary_color'    => ! empty( $primary_color ) ? $primary_color : '#000000',
-			'secondary_color'  => ! empty( $secondary_color ) ? $secondary_color : '#ffffff',
-			'autoplay'         => get_post_meta( $slider_id, '_wc_ps_autoplay', true ) === '1',
-			'loop'             => get_post_meta( $slider_id, '_wc_ps_loop', true ) === '1',
-			'speed'            => ! empty( $speed ) ? $speed : 3000,
-			'custom_css'       => ! empty( $custom_css ) ? $custom_css : '',
-			'show_title'       => $show_title !== '0',
-			'show_price'       => $show_price !== '0',
-			'show_description' => $show_description === '1',
-			'show_button'      => $show_button !== '0',
-			'show_image'       => $show_image !== '0',
-			'show_rating'      => $show_rating === '1',
-			'button_text'      => ! empty( $button_text ) ? $button_text : __( 'View Product', 'woocommerce-product-slider' ),
-			'slider_heading'   => ! empty( $slider_heading ) ? $slider_heading : '',
-			'clickable_image'  => $clickable_image !== '0',
+			'products'          => ! empty( $products ) ? $products : array(),
+			'custom_slides'     => ! empty( $custom_slides ) ? $custom_slides : array(),
+			'primary_color'     => ! empty( $primary_color ) ? $primary_color : '#000000',
+			'secondary_color'   => ! empty( $secondary_color ) ? $secondary_color : '#ffffff',
+			'button_color'      => ! empty( $button_color ) ? $button_color : '#0073aa',
+			'button_text_color' => ! empty( $button_text_color ) ? $button_text_color : '#ffffff',
+			'autoplay'          => get_post_meta( $slider_id, '_wc_ps_autoplay', true ) === '1',
+			'loop'              => get_post_meta( $slider_id, '_wc_ps_loop', true ) === '1',
+			'speed'             => ! empty( $speed ) ? $speed : 3000,
+			'custom_css'        => ! empty( $custom_css ) ? $custom_css : '',
+			'show_title'        => $show_title !== '0',
+			'show_price'        => $show_price !== '0',
+			'show_description'  => $show_description === '1',
+			'show_button'       => $show_button !== '0',
+			'show_image'        => $show_image !== '0',
+			'show_rating'       => $show_rating === '1',
+			'button_text'       => ! empty( $button_text ) ? $button_text : __( 'View Product', 'woocommerce-product-slider' ),
+			'slider_heading'    => ! empty( $slider_heading ) ? $slider_heading : '',
+			'clickable_image'   => $clickable_image !== '0',
 		);
 	}
 
@@ -201,8 +205,34 @@ class WC_Product_Slider_Shortcode {
 
 		// Add inline styles if custom CSS is set.
 		if ( ! empty( $config['custom_css'] ) ) {
-			echo '<style type="text/css">' . wp_kses_post( $config['custom_css'] ) . '</style>';
+			// Use wp_strip_all_tags to remove any potential HTML/script tags while preserving CSS syntax.
+			echo '<style type="text/css">' . esc_html( $config['custom_css'] ) . '</style>';
 		}
+
+		// Add color customization inline styles.
+		$button_color       = ! empty( $config['button_color'] ) ? $config['button_color'] : '#0073aa';
+		$button_text_color  = ! empty( $config['button_text_color'] ) ? $config['button_text_color'] : '#ffffff';
+		$button_hover_color = $this->darken_color( $button_color, 15 );
+
+		printf(
+			'<style type="text/css">
+				.wc-ps-slider-%1$s .wc-ps-product-actions .button,
+				.wc-ps-slider-%1$s .wc-ps-view-product {
+					background-color: %2$s !important;
+					border-color: %2$s !important;
+					color: %3$s !important;
+				}
+				.wc-ps-slider-%1$s .wc-ps-product-actions .button:hover,
+				.wc-ps-slider-%1$s .wc-ps-view-product:hover {
+					background-color: %4$s !important;
+					border-color: %4$s !important;
+				}
+			</style>',
+			esc_attr( $slider_id ),
+			esc_attr( $button_color ),
+			esc_attr( $button_text_color ),
+			esc_attr( $button_hover_color )
+		);
 
 		// Render slider container.
 		?>
@@ -210,7 +240,7 @@ class WC_Product_Slider_Shortcode {
 			<?php if ( ! empty( $config['slider_heading'] ) ) : ?>
 				<h2 class="wc-ps-slider-heading"><?php echo esc_html( $config['slider_heading'] ); ?></h2>
 			<?php endif; ?>
-			<div class="swiper" data-config='<?php echo esc_attr( wp_json_encode( $this->get_swiper_config( $config ) ) ); ?>'>
+			<div class="swiper" data-config='<?php echo esc_attr( wp_json_encode( $this->get_swiper_config( $config ) ) ); ?>' style="--swiper-navigation-color: <?php echo esc_attr( $config['primary_color'] ); ?>; --swiper-pagination-color: <?php echo esc_attr( $config['primary_color'] ); ?>;">
 				<div class="swiper-wrapper">
 					<?php foreach ( $slides as $slide ) : ?>
 						<div class="swiper-slide">
@@ -226,11 +256,11 @@ class WC_Product_Slider_Shortcode {
 				</div>
 
 				<!-- Navigation -->
-				<div class="swiper-button-prev" style="color: <?php echo esc_attr( $config['primary_color'] ); ?>;"></div>
-				<div class="swiper-button-next" style="color: <?php echo esc_attr( $config['primary_color'] ); ?>;"></div>
+				<div class="swiper-button-prev"></div>
+				<div class="swiper-button-next"></div>
 
 				<!-- Pagination -->
-				<div class="swiper-pagination" style="--swiper-pagination-color: <?php echo esc_attr( $config['primary_color'] ); ?>;"></div>
+				<div class="swiper-pagination"></div>
 			</div>
 		</div>
 		<?php
@@ -412,5 +442,39 @@ class WC_Product_Slider_Shortcode {
 			'<div class="wc-ps-error">%s</div>',
 			esc_html( $message )
 		);
+	}
+
+	/**
+	 * Darken a hex color by a percentage.
+	 *
+	 * @since 1.0.0
+	 * @param string $hex     Hex color code.
+	 * @param int    $percent Percentage to darken (0-100).
+	 * @return string Darkened hex color.
+	 */
+	protected function darken_color( $hex, $percent ) {
+		// Remove # if present.
+		$hex = str_replace( '#', '', $hex );
+
+		// Convert to RGB.
+		if ( 3 === strlen( $hex ) ) {
+			$r = hexdec( substr( $hex, 0, 1 ) . substr( $hex, 0, 1 ) );
+			$g = hexdec( substr( $hex, 1, 1 ) . substr( $hex, 1, 1 ) );
+			$b = hexdec( substr( $hex, 2, 1 ) . substr( $hex, 2, 1 ) );
+		} else {
+			$r = hexdec( substr( $hex, 0, 2 ) );
+			$g = hexdec( substr( $hex, 2, 2 ) );
+			$b = hexdec( substr( $hex, 4, 2 ) );
+		}
+
+		// Darken.
+		$r = max( 0, min( 255, $r - ( $r * $percent / 100 ) ) );
+		$g = max( 0, min( 255, $g - ( $g * $percent / 100 ) ) );
+		$b = max( 0, min( 255, $b - ( $b * $percent / 100 ) ) );
+
+		// Convert back to hex.
+		return '#' . str_pad( dechex( (int) $r ), 2, '0', STR_PAD_LEFT ) .
+			str_pad( dechex( (int) $g ), 2, '0', STR_PAD_LEFT ) .
+			str_pad( dechex( (int) $b ), 2, '0', STR_PAD_LEFT );
 	}
 }
