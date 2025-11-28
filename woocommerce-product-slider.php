@@ -11,7 +11,7 @@
  * Plugin Name:       WooCommerce Product Slider
  * Plugin URI:        https://github.com/Nicolaszabala/product-slider-plugin
  * Description:       Professional WooCommerce Product Slider with advanced customization options. Create beautiful, responsive product sliders with intuitive visual controls.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Nicolas Zabala
@@ -33,7 +33,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Current plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
  */
-define( 'WC_PRODUCT_SLIDER_VERSION', '1.0.0' );
+define( 'WC_PRODUCT_SLIDER_VERSION', '1.0.1' );
 
 /**
  * Plugin directory path.
