@@ -281,3 +281,4 @@ GNU General Public License for more details.
 ---
 
 **Made with ❤️ following TDD principles**
+# Comfy-Product-Slider

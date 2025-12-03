@@ -65,6 +65,31 @@ class WC_Product_Slider_Shortcode {
 		// Get slider configuration.
 		$config = $this->get_slider_config( $slider_id );
 
+		return $this->render_from_config( $slider_id, $config );
+	}
+
+	/**
+	 * Render slider from configuration array (used for preview).
+	 *
+	 * @since 1.1.0
+	 * @param array $config Slider configuration.
+	 * @return string Rendered slider HTML.
+	 */
+	public function render_preview( $config ) {
+		// Use a temporary ID for preview.
+		$slider_id = 999999;
+		return $this->render_from_config( $slider_id, $config );
+	}
+
+	/**
+	 * Internal render method.
+	 *
+	 * @since 1.1.0
+	 * @param int   $slider_id Slider ID.
+	 * @param array $config    Slider configuration.
+	 * @return string Rendered HTML.
+	 */
+	protected function render_from_config( $slider_id, $config ) {
 		// Validate that we have either products or custom slides.
 		if ( empty( $config['products'] ) && empty( $config['custom_slides'] ) ) {
 			return $this->render_error( __( 'No products or custom slides selected for this slider.', 'woocommerce-product-slider' ) );
@@ -102,6 +127,25 @@ class WC_Product_Slider_Shortcode {
 		$custom_css        = get_post_meta( $slider_id, '_wc_ps_custom_css', true );
 		$border_radius     = get_post_meta( $slider_id, '_wc_ps_border_radius', true );
 		$slide_gap         = get_post_meta( $slider_id, '_wc_ps_slide_gap', true );
+		$navigation_type   = get_post_meta( $slider_id, '_wc_ps_navigation_type', true );
+		$arrow_style       = get_post_meta( $slider_id, '_wc_ps_arrow_style', true );
+		$arrow_position    = get_post_meta( $slider_id, '_wc_ps_arrow_position', true );
+
+		// Navigation Customization
+		$nav_arrow_color        = get_post_meta( $slider_id, '_wc_ps_nav_arrow_color', true );
+		$nav_arrow_bg_color     = get_post_meta( $slider_id, '_wc_ps_nav_arrow_bg_color', true );
+		$nav_arrow_gradient     = get_post_meta( $slider_id, '_wc_ps_nav_arrow_gradient', true );
+		$nav_arrow_size         = get_post_meta( $slider_id, '_wc_ps_nav_arrow_size', true );
+		$nav_progressbar_color  = get_post_meta( $slider_id, '_wc_ps_nav_progressbar_color', true );
+		$nav_progressbar_height = get_post_meta( $slider_id, '_wc_ps_nav_progressbar_height', true );
+		$nav_progressbar_position = get_post_meta( $slider_id, '_wc_ps_nav_progressbar_position', true );
+		$show_arrows            = get_post_meta( $slider_id, '_wc_ps_show_arrows', true );
+
+		// Legacy support: if show_arrows is empty but nav type is 'both', set to true.
+		// If nav type is 'dots' and show_arrows is empty, set to true (default behavior).
+		if ( '' === $show_arrows ) {
+			$show_arrows = '1';
+		}
 
 		// Get display options.
 		$show_title       = get_post_meta( $slider_id, '_wc_ps_show_title', true );
@@ -114,6 +158,11 @@ class WC_Product_Slider_Shortcode {
 		$slider_heading   = get_post_meta( $slider_id, '_wc_ps_slider_heading', true );
 		$clickable_image  = get_post_meta( $slider_id, '_wc_ps_clickable_image', true );
 
+		$heading_font_size  = get_post_meta( $slider_id, '_wc_ps_heading_font_size', true );
+		$heading_alignment  = get_post_meta( $slider_id, '_wc_ps_heading_alignment', true );
+		$heading_typography = get_post_meta( $slider_id, '_wc_ps_heading_typography', true );
+		$heading_color      = get_post_meta( $slider_id, '_wc_ps_heading_color', true );
+
 		return array(
 			'products'          => ! empty( $products ) ? $products : array(),
 			'custom_slides'     => ! empty( $custom_slides ) ? $custom_slides : array(),
@@ -123,19 +172,34 @@ class WC_Product_Slider_Shortcode {
 			'button_text_color' => ! empty( $button_text_color ) ? $button_text_color : '#ffffff',
 			'border_radius'     => ! empty( $border_radius ) ? absint( $border_radius ) : 8,
 			'slide_gap'         => ! empty( $slide_gap ) ? absint( $slide_gap ) : 20,
-			'autoplay'          => get_post_meta( $slider_id, '_wc_ps_autoplay', true ) === '1',
+			'navigation_type'   => ! empty( $navigation_type ) ? $navigation_type : 'dots',
+			'arrow_style'            => ! empty( $arrow_style ) ? $arrow_style : 'default',
+			'arrow_position'         => ! empty( $arrow_position ) ? $arrow_position : 'inside',
+			'nav_arrow_color'        => ! empty( $nav_arrow_color ) ? $nav_arrow_color : '',
+			'nav_arrow_bg_color'     => ! empty( $nav_arrow_bg_color ) ? $nav_arrow_bg_color : '',
+			'nav_arrow_gradient'     => $nav_arrow_gradient === '1',
+			'nav_arrow_size'         => ! empty( $nav_arrow_size ) ? absint( $nav_arrow_size ) : 40,
+			'nav_progressbar_color'  => ! empty( $nav_progressbar_color ) ? $nav_progressbar_color : '',
+			'nav_progressbar_height' => ! empty( $nav_progressbar_height ) ? absint( $nav_progressbar_height ) : 4,
+			'nav_progressbar_position' => ! empty( $nav_progressbar_position ) ? $nav_progressbar_position : 'bottom',
+			'show_arrows'            => $show_arrows === '1',
+			'autoplay'               => get_post_meta( $slider_id, '_wc_ps_autoplay', true ) === '1',
 			'loop'              => get_post_meta( $slider_id, '_wc_ps_loop', true ) === '1',
 			'speed'             => ! empty( $speed ) ? $speed : 3000,
 			'custom_css'        => ! empty( $custom_css ) ? $custom_css : '',
-			'show_title'        => $show_title !== '0',
-			'show_price'        => $show_price !== '0',
+			'show_title'        => $show_title === '1',
+			'show_price'        => $show_price === '1',
 			'show_description'  => $show_description === '1',
-			'show_button'       => $show_button !== '0',
-			'show_image'        => $show_image !== '0',
+			'show_button'       => $show_button === '1',
+			'show_image'        => $show_image === '1',
 			'show_rating'       => $show_rating === '1',
 			'button_text'       => ! empty( $button_text ) ? $button_text : __( 'View Product', 'woocommerce-product-slider' ),
 			'slider_heading'    => ! empty( $slider_heading ) ? $slider_heading : '',
-			'clickable_image'   => $clickable_image !== '0',
+			'heading_font_size' => ! empty( $heading_font_size ) ? absint( $heading_font_size ) : 24,
+			'heading_alignment' => ! empty( $heading_alignment ) ? $heading_alignment : 'left',
+			'heading_typography' => ! empty( $heading_typography ) ? $heading_typography : 'default',
+			'heading_color'     => ! empty( $heading_color ) ? $heading_color : '',
+			'clickable_image'   => $clickable_image === '1',
 		);
 	}
 
@@ -201,17 +265,10 @@ class WC_Product_Slider_Shortcode {
 	 * @param int   $slider_id Slider post ID.
 	 * @param array $slides    Array of slides (products and custom slides).
 	 * @param array $config    Slider configuration.
-	 * @return string Rendered slider HTML.
 	 */
 	protected function render_slider( $slider_id, $slides, $config ) {
 		// Start output buffering.
 		ob_start();
-
-		// Add inline styles if custom CSS is set.
-		if ( ! empty( $config['custom_css'] ) ) {
-			// Use wp_strip_all_tags to remove any potential HTML/script tags while preserving CSS syntax.
-			echo '<style type="text/css">' . esc_html( $config['custom_css'] ) . '</style>';
-		}
 
 		// Add color and design customization inline styles.
 		$button_color       = ! empty( $config['button_color'] ) ? $config['button_color'] : '#0073aa';
@@ -236,25 +293,199 @@ class WC_Product_Slider_Shortcode {
 				.wc-ps-slider-%1$s .wc-ps-product {
 					border-radius: %5$spx !important;
 				}
-				.wc-ps-slider-%1$s .swiper-button-prev::after,
-				.wc-ps-slider-%1$s .swiper-button-next::after {
-					color: %6$s !important;
-				}
-				.wc-ps-slider-%1$s .swiper-pagination-bullet-active {
-					background-color: %6$s !important;
-				}
 			</style>',
 			esc_attr( $slider_id ),
 			esc_attr( $button_color ),
 			esc_attr( $button_text_color ),
 			esc_attr( $button_hover_color ),
-			esc_attr( $border_radius ),
-			esc_attr( $primary_color )
+			esc_attr( $border_radius )
 		);
+
+		// Pagination bullets color
+		if ( ! empty( $primary_color ) ) {
+			printf(
+				'<style type="text/css">
+					.wc-ps-slider-%1$s .swiper-pagination-bullet-active {
+						background-color: %2$s !important;
+					}
+				</style>',
+				esc_attr( $slider_id ),
+				esc_attr( $primary_color )
+			);
+		}
+
+		// Heading Styles
+		$heading_style = '';
+		if ( ! empty( $config['heading_font_size'] ) ) {
+			$heading_style .= 'font-size: ' . esc_attr( $config['heading_font_size'] ) . 'px;';
+		}
+		if ( ! empty( $config['heading_alignment'] ) ) {
+			$heading_style .= 'text-align: ' . esc_attr( $config['heading_alignment'] ) . ';';
+		}
+		if ( 'serif' === $config['heading_typography'] ) {
+			$heading_style .= 'font-family: "Lora", serif;';
+		} elseif ( 'sans-serif' === $config['heading_typography'] ) {
+			$heading_style .= 'font-family: sans-serif;';
+		}
+
+		// Only apply heading color if there is a heading
+		if ( ! empty( $config['slider_heading'] ) ) {
+			$heading_color = ! empty( $config['heading_color'] ) ? $config['heading_color'] : $primary_color;
+			printf(
+				'<style type="text/css">
+					.wc-ps-slider-%1$s .wc-ps-slider-heading {
+						color: %2$s;
+						margin-bottom: 20px;
+						%3$s
+					}
+				</style>',
+				esc_attr( $slider_id ),
+				esc_attr( $heading_color ),
+				$heading_style // Injected styles
+			);
+		}
+
+		// Navigation Customization Styles
+		// We use a high specificity selector (Class + Class + Attribute + Class = 0-4-0) to ensure we override the theme defaults (0-3-0) without using !important.
+		if ( ! empty( $config['nav_arrow_color'] ) ) {
+			printf(
+				'<style type="text/css">
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-prev,
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-next {
+						color: %2$s;
+					}
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-prev::after,
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-next::after {
+						color: %2$s;
+					}
+					/* Ensure border color is also applied for styles that use it */
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-prev,
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-next {
+						border-color: %2$s;
+					}
+				</style>',
+				esc_attr( $slider_id ),
+				esc_attr( $config['nav_arrow_color'] )
+			);
+		}
+
+		if ( ! empty( $config['nav_arrow_bg_color'] ) || $config['nav_arrow_gradient'] ) {
+			$bg_style = '';
+			$hover_bg_style = '';
+
+			if ( $config['nav_arrow_gradient'] ) {
+				// Gradient: Primary -> Secondary
+				$bg_style = sprintf(
+					'background: linear-gradient(135deg, %1$s, %2$s);',
+					esc_attr( $config['primary_color'] ),
+					esc_attr( $config['secondary_color'] )
+				);
+				// Hover: Secondary -> Primary (Reverse)
+				$hover_bg_style = sprintf(
+					'background: linear-gradient(135deg, %1$s, %2$s);',
+					esc_attr( $config['secondary_color'] ),
+					esc_attr( $config['primary_color'] )
+				);
+			} else {
+				// Flat Color
+				$bg_style = sprintf( 'background: %s;', esc_attr( $config['nav_arrow_bg_color'] ) );
+				// Hover: Darken by 10%
+				$hover_bg_style = sprintf( 'background: %s;', esc_attr( $this->darken_color( $config['nav_arrow_bg_color'], 10 ) ) );
+			}
+
+			printf(
+				'<style type="text/css">
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-prev,
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-next {
+						%2$s
+					}
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-prev:hover,
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-next:hover {
+						%3$s
+					}
+				</style>',
+				esc_attr( $slider_id ),
+				$bg_style, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				$hover_bg_style // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			);
+		}
+
+		if ( ! empty( $config['nav_arrow_size'] ) ) {
+			printf(
+				'<style type="text/css">
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-prev,
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-next {
+						width: %2$spx;
+						height: %2$spx;
+					}
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-prev::after,
+					.wc-ps-slider-%1$s.wc-ps-slider[data-arrow-style] .swiper-button-next::after {
+						font-size: %3$spx;
+					}
+				</style>',
+				esc_attr( $slider_id ),
+				esc_attr( $config['nav_arrow_size'] ),
+				esc_attr( $config['nav_arrow_size'] * 0.4 ) // Icon size relative to button
+			);
+		}
+
+		if ( ! empty( $config['nav_progressbar_color'] ) ) {
+			printf(
+				'<style type="text/css">
+					.wc-ps-slider-%1$s .swiper-pagination-progressbar-fill {
+						background: %2$s !important; /* Use important to override gradient if needed */
+					}
+				</style>',
+				esc_attr( $slider_id ),
+				esc_attr( $config['nav_progressbar_color'] )
+			);
+		}
+
+		if ( ! empty( $config['nav_progressbar_height'] ) ) {
+			printf(
+				'<style type="text/css">
+					.wc-ps-slider-%1$s .swiper-pagination-progressbar {
+						height: %2$spx;
+					}
+				</style>',
+				esc_attr( $slider_id ),
+				esc_attr( $config['nav_progressbar_height'] )
+			);
+		}
+
+		// Progress bar position
+		if ( 'top' === $config['nav_progressbar_position'] ) {
+			printf(
+				'<style type="text/css">
+					.wc-ps-slider-%1$s .swiper-pagination-progressbar {
+						top: 0;
+						bottom: auto;
+					}
+					.wc-ps-slider-%1$s {
+						padding-top: %2$spx; /* Add padding to prevent overlap */
+					}
+				</style>',
+				esc_attr( $slider_id ),
+				esc_attr( $config['nav_progressbar_height'] + 10 )
+			);
+		} elseif ( 'bottom' === $config['nav_progressbar_position'] ) {
+			printf(
+				'<style type="text/css">
+					.wc-ps-slider-%1$s .swiper-pagination-progressbar {
+						top: auto;
+						bottom: 0;
+					}
+				</style>',
+				esc_attr( $slider_id )
+			);
+		}
 
 		// Render slider container.
 		?>
-		<div class="wc-ps-slider wc-ps-slider-<?php echo esc_attr( $slider_id ); ?>" data-slider-id="<?php echo esc_attr( $slider_id ); ?>">
+		<div class="wc-ps-slider wc-ps-slider-<?php echo esc_attr( $slider_id ); ?>"
+			data-slider-id="<?php echo esc_attr( $slider_id ); ?>"
+			data-arrow-style="<?php echo esc_attr( $config['arrow_style'] ); ?>"
+			data-arrow-position="<?php echo esc_attr( $config['arrow_position'] ); ?>">
 			<?php if ( ! empty( $config['slider_heading'] ) ) : ?>
 				<h2 class="wc-ps-slider-heading"><?php echo esc_html( $config['slider_heading'] ); ?></h2>
 			<?php endif; ?>
@@ -273,15 +504,25 @@ class WC_Product_Slider_Shortcode {
 					<?php endforeach; ?>
 				</div>
 
-				<!-- Navigation -->
-				<div class="swiper-button-prev"></div>
-				<div class="swiper-button-next"></div>
+				<?php if ( $config['show_arrows'] ) : ?>
+					<!-- Navigation -->
+					<div class="swiper-button-prev"></div>
+					<div class="swiper-button-next"></div>
+				<?php endif; ?>
 
-				<!-- Pagination -->
-				<div class="swiper-pagination"></div>
+				<?php if ( 'none' !== $config['navigation_type'] ) : ?>
+					<!-- Pagination -->
+					<div class="swiper-pagination"></div>
+				<?php endif; ?>
 			</div>
 		</div>
 		<?php
+
+		// Add inline styles if custom CSS is set (Output last to override generated styles).
+		if ( ! empty( $config['custom_css'] ) ) {
+			// Use wp_strip_all_tags to remove any potential HTML/script tags while preserving CSS syntax.
+			echo '<style type="text/css">' . esc_html( $config['custom_css'] ) . '</style>';
+		}
 
 		// Return buffered content.
 		return ob_get_clean();
@@ -390,13 +631,28 @@ class WC_Product_Slider_Shortcode {
 
 		$clickable     = $config['clickable_image'] && ! empty( $url );
 		$wrapper_tag   = $clickable ? 'a' : 'div';
-		$wrapper_attrs = $clickable ? 'href="' . esc_url( $url ) . '" class="wc-ps-custom-slide-link"' : 'class="wc-ps-custom-slide-content"';
+		$wrapper_attrs = $clickable ? 'href="' . esc_url( $url ) . '" class="wc-ps-product-link"' : 'class="wc-ps-product-content"';
 		?>
-		<div class="wc-ps-custom-slide">
+		<div class="wc-ps-product wc-ps-custom-slide">
 			<<?php echo esc_attr( $wrapper_tag ); ?> <?php echo $wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above. ?>>
-				<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $title ); ?>" class="wc-ps-custom-slide-image" />
-				<?php if ( ! empty( $title ) ) : ?>
-					<div class="wc-ps-custom-slide-title"><?php echo esc_html( $title ); ?></div>
+				<?php if ( $config['show_image'] ) : ?>
+					<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $title ); ?>" class="wc-ps-product-image" />
+				<?php endif; ?>
+
+				<?php if ( ! empty( $title ) || $config['show_button'] ) : ?>
+					<div class="wc-ps-product-info">
+						<?php if ( ! empty( $title ) && $config['show_title'] ) : ?>
+							<h3 class="wc-ps-product-title"><?php echo esc_html( $title ); ?></h3>
+						<?php endif; ?>
+
+						<?php if ( $config['show_button'] && ! empty( $url ) ) : ?>
+							<div class="wc-ps-product-actions">
+								<a href="<?php echo esc_url( $url ); ?>" class="button wc-ps-view-product">
+									<?php echo esc_html( $config['button_text'] ); ?>
+								</a>
+							</div>
+						<?php endif; ?>
+					</div>
 				<?php endif; ?>
 			</<?php echo esc_attr( $wrapper_tag ); ?>>
 		</div>
@@ -411,24 +667,40 @@ class WC_Product_Slider_Shortcode {
 	 * @return array Swiper configuration array.
 	 */
 	protected function get_swiper_config( $config ) {
-		$slide_gap = isset( $config['slide_gap'] ) ? absint( $config['slide_gap'] ) : 20;
+		$slide_gap       = isset( $config['slide_gap'] ) ? absint( $config['slide_gap'] ) : 20;
+		$navigation_type = isset( $config['navigation_type'] ) ? $config['navigation_type'] : 'dots';
 
-		return array(
+		// Configure pagination based on navigation type.
+		$pagination_config = array(
+			'el'        => '.swiper-pagination',
+			'clickable' => true,
+		);
+
+		if ( 'progressbar' === $navigation_type ) {
+			$pagination_config['type'] = 'progressbar';
+		} elseif ( 'fraction' === $navigation_type ) {
+			$pagination_config['type'] = 'fraction';
+		} elseif ( 'dots' === $navigation_type || 'both' === $navigation_type ) {
+			$pagination_config['type']           = 'bullets';
+			$pagination_config['dynamicBullets'] = true;
+		} elseif ( 'none' === $navigation_type ) {
+			$pagination_config = false;
+		}
+
+		$swiper_config = array(
 			'slidesPerView' => 1,
 			'spaceBetween'  => $slide_gap,
+			'speed'         => 800, // Comfy: slower, smoother transitions.
+			'centeredSlides' => false, // Ensure slides start from the left
 			'loop'          => $config['loop'],
 			'autoplay'      => $config['autoplay'] ? array(
 				'delay'                => $config['speed'],
 				'disableOnInteraction' => false,
 			) : false,
-			'pagination'    => array(
-				'el'        => '.swiper-pagination',
-				'clickable' => true,
-			),
-			'navigation'    => array(
+			'navigation'    => $config['show_arrows'] ? array(
 				'nextEl' => '.swiper-button-next',
 				'prevEl' => '.swiper-button-prev',
-			),
+			) : false,
 			'breakpoints'   => array(
 				640  => array(
 					'slidesPerView' => 2,
@@ -444,6 +716,12 @@ class WC_Product_Slider_Shortcode {
 				),
 			),
 		);
+
+		if ( false !== $pagination_config ) {
+			$swiper_config['pagination'] = $pagination_config;
+		}
+
+		return $swiper_config;
 	}
 
 	/**

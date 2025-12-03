@@ -28,7 +28,7 @@
 	align-items: center;
 	gap: 10px;
 	padding: 10px;
-	background: #f0f0f1;
+	background: #FAF7F5;
 	border-radius: 4px;
 	margin-bottom: 15px;
 }
@@ -58,7 +58,7 @@
 }
 
 .wc-ps-search-result-item:hover {
-	background-color: #f9f9f9;
+	background-color: #FAF7F5;
 }
 
 /* Product Info */
@@ -85,12 +85,12 @@
 
 .wc-ps-product-details strong {
 	font-size: 14px;
-	color: #1e1e1e;
+	color: #4A403A;
 }
 
 .wc-ps-product-price {
 	font-size: 13px;
-	color: #757575;
+	color: #8A8075;
 }
 
 /* Selected Products Section */
@@ -104,16 +104,16 @@
 	margin: 0 0 15px 0;
 	font-size: 14px;
 	font-weight: 600;
-	color: #1e1e1e;
+	color: #4A403A;
 }
 
 .wc-ps-no-products {
-	color: #757575;
+	color: #8A8075;
 	font-style: italic;
 	margin: 0;
 	padding: 15px;
 	text-align: center;
-	background: #f9f9f9;
+	background: #FAF7F5;
 	border-radius: 4px;
 }
 
@@ -129,7 +129,7 @@
 	justify-content: space-between;
 	align-items: center;
 	padding: 10px;
-	background: #f9f9f9;
+	background: #FAF7F5;
 	border: 1px solid #ddd;
 	border-radius: 4px;
 	margin-bottom: 8px;
@@ -138,7 +138,7 @@
 
 .wc-ps-selected-item:hover {
 	background: #fff;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 1px 3px rgba(74, 64, 58, 0.1);
 }
 
 .wc-ps-selected-item:last-child {
@@ -147,7 +147,7 @@
 
 .wc-ps-product-name {
 	font-size: 14px;
-	color: #1e1e1e;
+	color: #4A403A;
 	font-weight: 500;
 }
 
@@ -184,6 +184,14 @@
 .wc-ps-product-selector .components-button.is-secondary {
 	height: auto;
 	padding: 6px 12px;
+	color: #4A403A;
+	border-color: #4A403A;
+}
+
+.wc-ps-product-selector .components-button.is-secondary:hover {
+	background: #FAF7F5;
+	color: #3E2723;
+	border-color: #3E2723;
 }
 
 .wc-ps-product-selector .components-button.is-destructive {
@@ -220,23 +228,31 @@
 	font-family: monospace;
 	font-size: 13px;
 	padding: 8px 12px;
-	background: #f6f7f7;
+	background: #FAF7F5;
 	border: 1px solid #dcdcde;
 	border-radius: 4px;
-	color: #2c3338;
+	color: #4A403A;
 	cursor: pointer;
 }
 
 .wc-ps-shortcode-input:focus {
 	background: #fff;
-	border-color: #2271b1;
+	border-color: #D4A373;
 	outline: 2px solid transparent;
-	box-shadow: 0 0 0 1px #2271b1;
+	box-shadow: 0 0 0 1px #D4A373;
 }
 
 .wc-ps-copy-shortcode {
 	flex-shrink: 0;
 	white-space: nowrap;
+	background: #4A403A !important;
+	border-color: #4A403A !important;
+	color: #fff !important;
+}
+
+.wc-ps-copy-shortcode:hover {
+	background: #3E2723 !important;
+	border-color: #3E2723 !important;
 }
 
 .wc-ps-copy-shortcode:disabled {
@@ -310,11 +326,11 @@
 }
 
 .wc-ps-css-editor-actions .description code {
-	background: #f6f7f7;
+	background: #FAF7F5;
 	padding: 2px 6px;
 	border-radius: 3px;
 	font-size: 11px;
-	color: #2c3338;
+	color: #4A403A;
 	border: 1px solid #dcdcde;
 }
 

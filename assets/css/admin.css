@@ -1,59 +1,92 @@
 /**
- * WooCommerce Product Slider - Premium Admin Styles
- * Theme: White & Sky Blue
+ * Comfy Slider - Premium Admin Styles
+ * Theme: Café de Tarde (Afternoon Coffee)
+ * Palette: Warm, cozy, literary café vibes
  */
 
-/* ===== Global Variables ===== */
+/* ===== Typography - Lora Font ===== */
+@font-face {
+    font-family: 'Lora';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('https://fonts.gstatic.com/s/lora/v32/0QI6MX1D_JOuGQbT0gvTJPa787weuxJBkq0.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Lora';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('https://fonts.gstatic.com/s/lora/v32/0QI6MX1D_JOuGQbT0gvTJPa787z4vRJBkq0.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Lora';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('https://fonts.gstatic.com/s/lora/v32/0QI6MX1D_JOuGQbT0gvTJPa787zsvRJBkq0.woff2') format('woff2');
+}
+
+/* Fallback to Georgia if Lora fails to load - Scoped to plugin areas */
+.wc-ps-metabox,
+.wc-ps-admin-header,
+.wc-ps-settings-page {
+    font-family: 'Lora', 'Georgia', serif;
+}
+
+/* ===== Global Variables - Café de Tarde Palette ===== */
 :root {
-    --wc-ps-primary: #0073AA;
-    --wc-ps-secondary: #00A0D2;
-    --wc-ps-light-blue: #E5F5FA;
-    --wc-ps-dark-blue: #005177;
+    /* Core Café Colors */
+    --wc-ps-primary: #D4A373;
+    /* Ocre / Caramelo - Main accent */
+    --wc-ps-secondary: #C9956B;
+    /* Caramelo más oscuro - Secondary accent */
+    --wc-ps-bg-app: #F9F7F2;
+    /* Blanco Roto / Crema - Main background */
+    --wc-ps-bg-sidebar: #EBE5DA;
+    /* Beige / Madera Clara - Sidebar */
+    --wc-ps-text: #4A403A;
+    /* Marrón Café Profundo - Primary text */
+    --wc-ps-text-light: #8A8075;
+    /* Taupe / Gris Marrón - Secondary text */
+    --wc-ps-border: #D8D0C4;
+    /* Beige claro - Borders */
+    --wc-ps-shadow: rgba(74, 64, 58, 0.12);
+    /* Soft brown shadow */
+    --wc-ps-success: #8B7355;
+    /* Café con leche - Success state */
     --wc-ps-white: #FFFFFF;
-    --wc-ps-text: #2C3338;
-    --wc-ps-text-light: #50575E;
-    --wc-ps-border: #DFE4E8;
-    --wc-ps-shadow: rgba(0, 115, 170, 0.1);
-    --wc-ps-success: #00A32A;
+    /* Pure white for contrast */
+
+    /* Coffee Theme Accents */
+    --wc-ps-coffee-dark: #3E2723;
+    /* Espresso - Dark accents */
+    --wc-ps-coffee-light: #F5E6D3;
+    /* Crema - Light accents */
+    --wc-ps-steam: #D4A373;
+    /* Steam color (matches primary) */
+    --wc-ps-light-blue: #F5E6D3;
+    /* Mapped to Crema for compatibility */
+    --wc-ps-dark-blue: #3E2723;
+    /* Mapped to Espresso for compatibility */
 }
 
-/* ===== Plugin Header Banner ===== */
+/* ===== Plugin Header Banner (Full Width) ===== */
 .wc-ps-admin-header {
-    background: linear-gradient(135deg, var(--wc-ps-primary) 0%, var(--wc-ps-secondary) 100%);
+    background: var(--wc-ps-primary);
     color: var(--wc-ps-white);
-    padding: 30px;
-    margin: 20px 0 30px 0;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px var(--wc-ps-shadow);
-    position: relative;
-    overflow: hidden;
-}
-
-.wc-ps-admin-header::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 300px;
-    height: 300px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-}
-
-.wc-ps-admin-header::after {
-    content: '';
-    position: absolute;
-    bottom: -30%;
-    left: -5%;
-    width: 200px;
-    height: 200px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50%;
+    padding: 25px 20px;
+    margin: 0 0 0 -20px;
+    width: calc(100% + 20px);
+    border-bottom: 3px solid var(--wc-ps-secondary);
+    box-shadow: 0 2px 8px var(--wc-ps-shadow);
 }
 
 .wc-ps-header-content {
-    position: relative;
-    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     gap: 20px;
@@ -80,6 +113,7 @@
     margin: 0;
     font-size: 28px;
     font-weight: 600;
+    font-family: 'Lora', 'Georgia', serif;
     color: var(--wc-ps-white);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -102,7 +136,7 @@
 }
 
 .postbox.wc-ps-metabox .postbox-header {
-    background: linear-gradient(to right, var(--wc-ps-light-blue) 0%, var(--wc-ps-white) 100%);
+    background: var(--wc-ps-light-blue);
     border-bottom: 2px solid var(--wc-ps-secondary);
     padding: 15px 20px;
 }
@@ -111,19 +145,7 @@
     color: var(--wc-ps-primary);
     font-size: 16px;
     font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.postbox.wc-ps-metabox .postbox-header h2::before {
-    content: '';
-    display: inline-block;
-    width: 4px;
-    height: 20px;
-    background: var(--wc-ps-secondary);
-    border-radius: 2px;
-    vertical-align: middle;
+    font-family: 'Lora', 'Georgia', serif;
 }
 
 .postbox.wc-ps-metabox .inside {
@@ -134,7 +156,7 @@
 /* ===== Help Text & Descriptions ===== */
 .wc-ps-help-box {
     background: var(--wc-ps-light-blue);
-    border-left: 4px solid var(--wc-ps-secondary);
+    border: 1px solid var(--wc-ps-border);
     padding: 15px;
     margin-bottom: 20px;
     border-radius: 4px;
@@ -165,7 +187,7 @@
 
 /* ===== Shortcode Container ===== */
 .wc-ps-shortcode-container {
-    background: linear-gradient(135deg, var(--wc-ps-light-blue) 0%, var(--wc-ps-white) 100%);
+    background: var(--wc-ps-light-blue);
     padding: 20px;
     border-radius: 8px;
     border: 2px solid var(--wc-ps-secondary);
@@ -197,7 +219,7 @@
 .wc-ps-shortcode-input:focus {
     outline: none;
     border-color: var(--wc-ps-secondary);
-    box-shadow: 0 0 0 3px rgba(0, 160, 210, 0.1);
+    box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.15);
 }
 
 .wc-ps-copy-shortcode {
@@ -211,13 +233,13 @@
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 6px rgba(0, 115, 170, 0.2);
+    box-shadow: 0 2px 6px var(--wc-ps-shadow);
 }
 
 .wc-ps-copy-shortcode:hover {
     background: var(--wc-ps-secondary);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 115, 170, 0.3);
+    box-shadow: 0 4px 12px var(--wc-ps-shadow);
 }
 
 .wc-ps-copy-shortcode:active {
@@ -258,17 +280,18 @@
 }
 
 .form-table input[type="color"] {
-    width: 80px;
-    height: 40px;
+    width: 100px;
+    height: 38px;
     border: 2px solid var(--wc-ps-border);
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s ease;
+    padding: 2px;
 }
 
 .form-table input[type="color"]:hover {
     border-color: var(--wc-ps-secondary);
-    box-shadow: 0 0 0 3px rgba(0, 160, 210, 0.1);
+    box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.15);
 }
 
 .form-table input[type="number"],
@@ -285,11 +308,14 @@
 .form-table input[type="url"]:focus {
     border-color: var(--wc-ps-secondary);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 160, 210, 0.1);
+    box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.15);
 }
 
 /* ===== Checkboxes ===== */
-input[type="checkbox"] {
+/* ===== Checkboxes ===== */
+/* Target standard WP checkboxes within our containers to ensure override */
+.wc-ps-metabox input[type="checkbox"],
+.wc-ps-settings-page input[type="checkbox"] {
     width: 18px;
     height: 18px;
     border: 2px solid var(--wc-ps-border);
@@ -297,11 +323,28 @@ input[type="checkbox"] {
     margin-right: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: none !important;
+    /* Remove WP default shadow */
 }
 
-input[type="checkbox"]:checked {
-    background: var(--wc-ps-secondary);
-    border-color: var(--wc-ps-secondary);
+/* Override WordPress default blue with high specificity */
+.wc-ps-metabox input[type="checkbox"]:checked,
+.wc-ps-settings-page input[type="checkbox"]:checked {
+    background: var(--wc-ps-secondary) !important;
+    border-color: var(--wc-ps-secondary) !important;
+}
+
+.wc-ps-metabox input[type="checkbox"]:checked::before,
+.wc-ps-settings-page input[type="checkbox"]:checked::before {
+    color: #fff !important;
+    /* Ensure checkmark is white */
+}
+
+.wc-ps-metabox input[type="checkbox"]:focus,
+.wc-ps-settings-page input[type="checkbox"]:focus {
+    box-shadow: 0 0 0 2px var(--wc-ps-white), 0 0 0 4px var(--wc-ps-secondary) !important;
+    border-color: var(--wc-ps-secondary) !important;
+    outline: none !important;
 }
 
 /* ===== Product Selector ===== */
@@ -318,7 +361,7 @@ input[type="checkbox"]:checked {
 
 .select2-container--default.select2-container--focus .select2-selection--multiple {
     border-color: var(--wc-ps-secondary);
-    box-shadow: 0 0 0 3px rgba(0, 160, 210, 0.1);
+    box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.15);
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
@@ -338,9 +381,9 @@ input[type="checkbox"]:checked {
     color: var(--wc-ps-dark-blue);
 }
 
-/* ===== Custom CSS Editor - Dark Mode ===== */
+/* ===== Custom CSS Editor - Tokyo Night Theme ===== */
 .wc-ps-css-editor-wrapper {
-    background: #1e1e1e;
+    background: #1a1b26;
     border-radius: 8px;
     overflow: hidden;
     border: 2px solid var(--wc-ps-primary);
@@ -348,16 +391,16 @@ input[type="checkbox"]:checked {
 }
 
 .wc-ps-css-editor-header {
-    background: linear-gradient(135deg, #2d2d30 0%, #1e1e1e 100%);
+    background: #16161e;
     padding: 12px 20px;
-    border-bottom: 1px solid #3e3e42;
+    border-bottom: 1px solid #292e42;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
 .wc-ps-css-editor-header span {
-    color: #d4d4d4;
+    color: #a9b1d6;
     font-size: 12px;
     font-family: monospace;
 }
@@ -367,53 +410,69 @@ input[type="checkbox"]:checked {
     min-height: 300px;
     font-size: 14px;
     line-height: 1.6;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    background: #1e1e1e;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', monospace;
+    background: #1a1b26;
+    color: #a9b1d6;
 }
 
 .CodeMirror-gutters {
-    background: #252526;
-    border-right: 1px solid #3e3e42;
+    background: #1a1b26;
+    border-right: 1px solid #292e42;
 }
 
 .CodeMirror-linenumber {
-    color: #858585;
+    color: #565f89;
 }
 
 .cm-s-default .cm-keyword {
-    color: #569cd6;
+    color: #bb9af7;
+    /* Purple */
 }
 
 .cm-s-default .cm-atom {
-    color: #b5cea8;
+    color: #ff9e64;
+    /* Orange */
 }
 
 .cm-s-default .cm-number {
-    color: #b5cea8;
+    color: #ff9e64;
+    /* Orange */
 }
 
 .cm-s-default .cm-def {
-    color: #9cdcfe;
+    color: #7aa2f7;
+    /* Blue */
 }
 
 .cm-s-default .cm-variable-2 {
-    color: #9cdcfe;
+    color: #c0caf5;
+    /* White/Blue */
 }
 
 .cm-s-default .cm-property {
-    color: #9cdcfe;
+    color: #7dcfff;
+    /* Cyan */
 }
 
 .cm-s-default .cm-string {
-    color: #ce9178;
+    color: #9ece6a;
+    /* Green */
 }
 
 .cm-s-default .cm-comment {
-    color: #6a9955;
+    color: #565f89;
+    /* Grey/Blue */
+    font-style: italic;
 }
 
 .cm-s-default .cm-tag {
-    color: #569cd6;
+    color: #f7768e;
+    /* Red */
+}
+
+.cm-s-default .cm-attribute {
+    color: #bb9af7;
+    /* Purple */
 }
 
 /* ===== Custom Slides ===== */
@@ -421,7 +480,7 @@ input[type="checkbox"]:checked {
     border: 2px solid var(--wc-ps-border);
     padding: 20px;
     margin-bottom: 15px;
-    background: linear-gradient(to bottom, var(--wc-ps-white) 0%, var(--wc-ps-light-blue) 100%);
+    background: var(--wc-ps-white);
     position: relative;
     border-radius: 8px;
     transition: all 0.3s ease;
@@ -459,6 +518,7 @@ input[type="checkbox"]:checked {
     border: 2px solid var(--wc-ps-border);
     background: var(--wc-ps-white);
     display: inline-block;
+    padding: 30px 10px 10px 10px;
 }
 
 .wc-ps-image-preview img {
@@ -492,36 +552,41 @@ input[type="checkbox"]:checked {
 .wc-ps-slide-field input[type="url"]:focus {
     border-color: var(--wc-ps-secondary);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 160, 210, 0.1);
+    box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.15);
 }
 
-.wc-ps-upload-image,
-.wc-ps-remove-image {
-    background: var(--wc-ps-primary);
-    color: var(--wc-ps-white);
-    border: none;
-    padding: 10px 18px;
-    border-radius: 6px;
+/* Target specifically to override WP button styles */
+button.wc-ps-upload-image,
+button.wc-ps-remove-image {
+    background: var(--wc-ps-primary) !important;
+    color: var(--wc-ps-white) !important;
+    border: none !important;
+    padding: 10px 18px !important;
+    border-radius: 6px !important;
     cursor: pointer;
     font-weight: 500;
     transition: all 0.3s ease;
     margin-right: 8px;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    height: auto !important;
+    line-height: normal !important;
 }
 
-.wc-ps-upload-image:hover {
-    background: var(--wc-ps-secondary);
+button.wc-ps-upload-image:hover {
+    background: var(--wc-ps-secondary) !important;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 115, 170, 0.2);
+    box-shadow: 0 4px 8px var(--wc-ps-shadow) !important;
 }
 
-.wc-ps-remove-image {
-    background: #d63638;
+button.wc-ps-remove-image {
+    background: #d63638 !important;
 }
 
-.wc-ps-remove-image:hover {
-    background: #b32d2e;
+button.wc-ps-remove-image:hover {
+    background: #b32d2e !important;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(214, 54, 56, 0.2);
+    box-shadow: 0 4px 8px rgba(214, 54, 56, 0.2) !important;
 }
 
 #wc-ps-add-custom-slide {
@@ -534,13 +599,13 @@ input[type="checkbox"]:checked {
     cursor: pointer;
     transition: all 0.3s ease;
     margin-top: 10px;
-    box-shadow: 0 2px 6px rgba(0, 160, 210, 0.2);
+    box-shadow: 0 2px 6px rgba(212, 163, 115, 0.2);
 }
 
 #wc-ps-add-custom-slide:hover {
     background: var(--wc-ps-primary);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 160, 210, 0.3);
+    box-shadow: 0 4px 12px rgba(212, 163, 115, 0.3);
 }
 
 /* ===== Buttons ===== */
@@ -552,14 +617,14 @@ input[type="checkbox"]:checked {
     padding: 8px 20px;
     font-weight: 600;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 115, 170, 0.2);
+    box-shadow: 0 2px 4px var(--wc-ps-shadow);
 }
 
 .button-primary:hover {
     background: var(--wc-ps-secondary);
     border-color: var(--wc-ps-secondary);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 115, 170, 0.3);
+    box-shadow: 0 4px 8px var(--wc-ps-shadow);
 }
 
 /* ===== Dividers ===== */
@@ -585,6 +650,7 @@ hr {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -622,6 +688,40 @@ hr {
         margin-left: -10px;
         margin-right: -10px;
         border-radius: 0;
+    }
+
+    /* Display Options Responsive */
+    .wc-ps-metabox .form-table th,
+    .wc-ps-metabox .form-table td {
+        display: block;
+        width: 100% !important;
+        padding: 10px 0;
+    }
+
+    .wc-ps-metabox .form-table th {
+        padding-bottom: 5px;
+    }
+
+    .wc-ps-metabox .form-table td {
+        padding-top: 5px;
+    }
+
+    .wc-ps-metabox input[type="text"],
+    .wc-ps-metabox input[type="number"],
+    .wc-ps-metabox select {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Fix flex containers in Display Options */
+    .wc-ps-metabox div[style*="display: flex"] {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .wc-ps-metabox div[style*="flex: 1"] {
+        flex: none !important;
+        width: 100% !important;
     }
 }
 
@@ -670,4 +770,83 @@ hr {
 
 .wc-ps-badge.wc-ps-badge-pro {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* ===== Preview Box ===== */
+.wc-ps-preview-wrapper {
+    background: #fff;
+    border: 1px solid var(--wc-ps-border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.wc-ps-preview-wrapper .wc-ps-help-box {
+    margin: 0;
+    border-bottom: 1px solid var(--wc-ps-border);
+    border-radius: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#wc-ps-preview-container {
+    padding: 20px;
+    background: #f0f0f1;
+    /* WP Admin background to simulate page */
+    min-height: 200px;
+    /* display: flex; Removed to prevent Swiper layout issues */
+    /* justify-content: center; */
+    /* align-items: center; */
+}
+
+.wc-ps-preview-placeholder {
+    text-align: center;
+    color: #646970;
+}
+
+.wc-ps-preview-placeholder .dashicons {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 10px;
+}
+
+/* Ensure preview slider fits */
+#wc-ps-preview-container .wc-ps-slider {
+    width: 100%;
+    margin: 0;
+}
+
+/* ===== Checkbox Styling - Reset to WordPress Default ===== */
+.wc-ps-metabox input[type="checkbox"] {
+    -webkit-appearance: checkbox;
+    -moz-appearance: checkbox;
+    appearance: checkbox;
+    width: 16px;
+    height: 16px;
+    background-color: #fff;
+    border: 1px solid #8c8f94;
+    border-radius: 2px;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.wc-ps-metabox input[type="checkbox"]:checked {
+    background-color: #2271b1;
+    border-color: #2271b1;
+}
+
+.wc-ps-metabox input[type="checkbox"]:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: 2px solid transparent;
+}
+
+/* Fix checkbox alignment in labels */
+.wc-ps-metabox label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
