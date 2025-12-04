@@ -77,12 +77,12 @@ class WC_Product_Slider_Admin {
 		// Enqueue WordPress Color Picker.
 		wp_enqueue_style( 'wp-color-picker' );
 
-		// Enqueue wp-color-picker-alpha styles.
+		// Enqueue wp-color-picker-alpha CSS for alpha slider display.
 		wp_enqueue_style(
 			'wp-color-picker-alpha',
 			plugin_dir_url( dirname( __DIR__ ) ) . 'assets/css/wp-color-picker-alpha.css',
 			array( 'wp-color-picker' ),
-			'3.0.0',
+			'3.0.4',
 			'all'
 		);
 
@@ -121,15 +121,18 @@ class WC_Product_Slider_Admin {
 		}
 
 		// Enqueue WordPress Color Picker with Alpha support.
+		// Explicitly enqueue iris first to ensure proper load order.
+		wp_enqueue_script( 'iris' );
+		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_script( 'wp-color-picker' );
 
 		// Enqueue wp-color-picker-alpha for transparency support
 		wp_enqueue_script(
 			'wp-color-picker-alpha',
 			plugin_dir_url( dirname( __DIR__ ) ) . 'assets/js/wp-color-picker-alpha.min.js',
-			array( 'wp-color-picker' ),
-			'3.0.0',
-			true
+			array( 'jquery', 'wp-color-picker' ),
+			'3.0.4',
+			false
 		);
 
 		// Enqueue CodeMirror.

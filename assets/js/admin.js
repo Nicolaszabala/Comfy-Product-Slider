@@ -9,33 +9,9 @@
 
 		// Initialize WordPress Color Picker with Alpha
 		if (typeof $.fn.wpColorPicker === 'function') {
-			console.log('Initializing color pickers...');
-			console.log('Found color pickers:', $('.wc-ps-color-picker').length);
-
-			$('.wc-ps-color-picker').each(function() {
-				var $input = $(this);
-				console.log('Initializing picker for:', $input.attr('id'), 'Alpha enabled:', $input.data('alpha-enabled'));
-
-				// Check if alpha is enabled for this input
-				var alphaEnabled = $input.data('alpha-enabled') === true || $input.data('alpha-enabled') === 'true';
-
-				var pickerOptions = {
-					palettes: ['#4A403A', '#D4A373', '#ffffff', '#000000', '#2271b1', 'rgba(255,255,255,0)']
-				};
-
-				// Add alpha-specific options if enabled
-				if (alphaEnabled) {
-					pickerOptions.type = 'full';
-					pickerOptions.alphaEnabled = true;
-					pickerOptions.alphaColorType = 'rgba';
-					pickerOptions.alphaColorWithSpace = false;
-				}
-
-				console.log('Picker options:', pickerOptions);
-				$input.wpColorPicker(pickerOptions);
+			$('.wc-ps-color-picker').wpColorPicker({
+				palettes: ['#4A403A', '#D4A373', '#ffffff', '#000000', '#2271b1', 'rgba(255,255,255,0)']
 			});
-		} else {
-			console.error('wpColorPicker function not available!');
 		}
 
 		// Initialize Select2 with AJAX
