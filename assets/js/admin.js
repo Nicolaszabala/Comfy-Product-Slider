@@ -51,7 +51,7 @@
 					delay: 250,
 					data: function (params) {
 						return {
-							action: 'wc_ps_search_products',
+							action: 'wc_product_slider_search_products',
 							term: params.term,
 							nonce: wcProductSlider.searchNonce
 						};
@@ -119,7 +119,7 @@
 				url: wcProductSlider.ajaxUrl,
 				type: 'POST',
 				data: {
-					action: 'wc_ps_preview_slider',
+					action: 'wc_product_slider_preview_slider',
 					nonce: wcProductSlider.previewNonce,
 					formData: formData
 				},

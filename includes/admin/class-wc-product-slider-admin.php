@@ -53,8 +53,8 @@ class WC_Product_Slider_Admin {
 		$this->version     = $version;
 
 		// Register AJAX handlers.
-		add_action( 'wp_ajax_wc_ps_search_products', array( $this, 'search_products' ) );
-		add_action( 'wp_ajax_wc_ps_preview_slider', array( $this, 'ajax_preview_slider' ) );
+		add_action( 'wp_ajax_wc_product_slider_search_products', array( $this, 'search_products' ) );
+		add_action( 'wp_ajax_wc_product_slider_preview_slider', array( $this, 'ajax_preview_slider' ) );
 	}
 
 	/**
@@ -153,8 +153,8 @@ class WC_Product_Slider_Admin {
 				'restUrl'     => esc_url_raw( rest_url() ),
 				'nonce'       => wp_create_nonce( 'wp_rest' ),
 				'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
-				'searchNonce' => wp_create_nonce( 'wc_ps_search_products' ),
-				'previewNonce' => wp_create_nonce( 'wc_ps_preview_slider' ),
+				'searchNonce' => wp_create_nonce( 'wc_product_slider_search_products' ),
+				'previewNonce' => wp_create_nonce( 'wc_product_slider_preview_slider' ),
 				'pluginUrl'   => plugin_dir_url( dirname( __DIR__ ) ),
 			)
 		);
@@ -405,7 +405,7 @@ class WC_Product_Slider_Admin {
 	 * @since 1.0.0
 	 */
 	public function search_products() {
-		check_ajax_referer( 'wc_ps_search_products', 'nonce' );
+		check_ajax_referer( 'wc_product_slider_search_products', 'nonce' );
 
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( __( 'Permission denied.', 'woocommerce-product-slider' ) );
@@ -444,7 +444,7 @@ class WC_Product_Slider_Admin {
 	 * @since 1.1.0
 	 */
 	public function ajax_preview_slider() {
-		check_ajax_referer( 'wc_ps_preview_slider', 'nonce' );
+		check_ajax_referer( 'wc_product_slider_preview_slider', 'nonce' );
 
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( __( 'Permission denied.', 'woocommerce-product-slider' ) );
