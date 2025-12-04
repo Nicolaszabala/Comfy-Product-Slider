@@ -12,6 +12,8 @@
     <exclude-pattern>/tests/*</exclude-pattern>
     <exclude-pattern>/assets/*</exclude-pattern>
     <exclude-pattern>/languages/*</exclude-pattern>
+    <exclude-pattern>debug-plugin.php</exclude-pattern>
+    <exclude-pattern>test-plugin.php</exclude-pattern>
 
     <!-- Show progress and sniff codes -->
     <arg value="ps"/>

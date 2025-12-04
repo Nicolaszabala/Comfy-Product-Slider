@@ -132,14 +132,14 @@ class WC_Product_Slider_Shortcode {
 		$arrow_position    = get_post_meta( $slider_id, '_wc_ps_arrow_position', true );
 
 		// Navigation Customization
-		$nav_arrow_color        = get_post_meta( $slider_id, '_wc_ps_nav_arrow_color', true );
-		$nav_arrow_bg_color     = get_post_meta( $slider_id, '_wc_ps_nav_arrow_bg_color', true );
-		$nav_arrow_gradient     = get_post_meta( $slider_id, '_wc_ps_nav_arrow_gradient', true );
-		$nav_arrow_size         = get_post_meta( $slider_id, '_wc_ps_nav_arrow_size', true );
-		$nav_progressbar_color  = get_post_meta( $slider_id, '_wc_ps_nav_progressbar_color', true );
-		$nav_progressbar_height = get_post_meta( $slider_id, '_wc_ps_nav_progressbar_height', true );
+		$nav_arrow_color          = get_post_meta( $slider_id, '_wc_ps_nav_arrow_color', true );
+		$nav_arrow_bg_color       = get_post_meta( $slider_id, '_wc_ps_nav_arrow_bg_color', true );
+		$nav_arrow_gradient       = get_post_meta( $slider_id, '_wc_ps_nav_arrow_gradient', true );
+		$nav_arrow_size           = get_post_meta( $slider_id, '_wc_ps_nav_arrow_size', true );
+		$nav_progressbar_color    = get_post_meta( $slider_id, '_wc_ps_nav_progressbar_color', true );
+		$nav_progressbar_height   = get_post_meta( $slider_id, '_wc_ps_nav_progressbar_height', true );
 		$nav_progressbar_position = get_post_meta( $slider_id, '_wc_ps_nav_progressbar_position', true );
-		$show_arrows            = get_post_meta( $slider_id, '_wc_ps_show_arrows', true );
+		$show_arrows              = get_post_meta( $slider_id, '_wc_ps_show_arrows', true );
 
 		// Legacy support: if show_arrows is empty but nav type is 'both', set to true.
 		// If nav type is 'dots' and show_arrows is empty, set to true (default behavior).
@@ -164,42 +164,42 @@ class WC_Product_Slider_Shortcode {
 		$heading_color      = get_post_meta( $slider_id, '_wc_ps_heading_color', true );
 
 		return array(
-			'products'          => ! empty( $products ) ? $products : array(),
-			'custom_slides'     => ! empty( $custom_slides ) ? $custom_slides : array(),
-			'primary_color'     => ! empty( $primary_color ) ? $primary_color : '#000000',
-			'secondary_color'   => ! empty( $secondary_color ) ? $secondary_color : '#ffffff',
-			'button_color'      => ! empty( $button_color ) ? $button_color : '#0073aa',
-			'button_text_color' => ! empty( $button_text_color ) ? $button_text_color : '#ffffff',
-			'border_radius'     => ! empty( $border_radius ) ? absint( $border_radius ) : 8,
-			'slide_gap'         => ! empty( $slide_gap ) ? absint( $slide_gap ) : 20,
-			'navigation_type'   => ! empty( $navigation_type ) ? $navigation_type : 'dots',
-			'arrow_style'            => ! empty( $arrow_style ) ? $arrow_style : 'default',
-			'arrow_position'         => ! empty( $arrow_position ) ? $arrow_position : 'inside',
-			'nav_arrow_color'        => ! empty( $nav_arrow_color ) ? $nav_arrow_color : '',
-			'nav_arrow_bg_color'     => ! empty( $nav_arrow_bg_color ) ? $nav_arrow_bg_color : '',
-			'nav_arrow_gradient'     => $nav_arrow_gradient === '1',
-			'nav_arrow_size'         => ! empty( $nav_arrow_size ) ? absint( $nav_arrow_size ) : 40,
-			'nav_progressbar_color'  => ! empty( $nav_progressbar_color ) ? $nav_progressbar_color : '',
-			'nav_progressbar_height' => ! empty( $nav_progressbar_height ) ? absint( $nav_progressbar_height ) : 4,
+			'products'                 => ! empty( $products ) ? $products : array(),
+			'custom_slides'            => ! empty( $custom_slides ) ? $custom_slides : array(),
+			'primary_color'            => ! empty( $primary_color ) ? $primary_color : '#000000',
+			'secondary_color'          => ! empty( $secondary_color ) ? $secondary_color : '#ffffff',
+			'button_color'             => ! empty( $button_color ) ? $button_color : '#0073aa',
+			'button_text_color'        => ! empty( $button_text_color ) ? $button_text_color : '#ffffff',
+			'border_radius'            => ! empty( $border_radius ) ? absint( $border_radius ) : 8,
+			'slide_gap'                => ! empty( $slide_gap ) ? absint( $slide_gap ) : 20,
+			'navigation_type'          => ! empty( $navigation_type ) ? $navigation_type : 'dots',
+			'arrow_style'              => ! empty( $arrow_style ) ? $arrow_style : 'default',
+			'arrow_position'           => ! empty( $arrow_position ) ? $arrow_position : 'inside',
+			'nav_arrow_color'          => ! empty( $nav_arrow_color ) ? $nav_arrow_color : '',
+			'nav_arrow_bg_color'       => ! empty( $nav_arrow_bg_color ) ? $nav_arrow_bg_color : '',
+			'nav_arrow_gradient'       => $nav_arrow_gradient === '1',
+			'nav_arrow_size'           => ! empty( $nav_arrow_size ) ? absint( $nav_arrow_size ) : 40,
+			'nav_progressbar_color'    => ! empty( $nav_progressbar_color ) ? $nav_progressbar_color : '',
+			'nav_progressbar_height'   => ! empty( $nav_progressbar_height ) ? absint( $nav_progressbar_height ) : 4,
 			'nav_progressbar_position' => ! empty( $nav_progressbar_position ) ? $nav_progressbar_position : 'bottom',
-			'show_arrows'            => $show_arrows === '1',
-			'autoplay'               => get_post_meta( $slider_id, '_wc_ps_autoplay', true ) === '1',
-			'loop'              => get_post_meta( $slider_id, '_wc_ps_loop', true ) === '1',
-			'speed'             => ! empty( $speed ) ? $speed : 3000,
-			'custom_css'        => ! empty( $custom_css ) ? $custom_css : '',
-			'show_title'        => $show_title === '1',
-			'show_price'        => $show_price === '1',
-			'show_description'  => $show_description === '1',
-			'show_button'       => $show_button === '1',
-			'show_image'        => $show_image === '1',
-			'show_rating'       => $show_rating === '1',
-			'button_text'       => ! empty( $button_text ) ? $button_text : __( 'View Product', 'woocommerce-product-slider' ),
-			'slider_heading'    => ! empty( $slider_heading ) ? $slider_heading : '',
-			'heading_font_size' => ! empty( $heading_font_size ) ? absint( $heading_font_size ) : 24,
-			'heading_alignment' => ! empty( $heading_alignment ) ? $heading_alignment : 'left',
-			'heading_typography' => ! empty( $heading_typography ) ? $heading_typography : 'default',
-			'heading_color'     => ! empty( $heading_color ) ? $heading_color : '',
-			'clickable_image'   => $clickable_image === '1',
+			'show_arrows'              => $show_arrows === '1',
+			'autoplay'                 => get_post_meta( $slider_id, '_wc_ps_autoplay', true ) === '1',
+			'loop'                     => get_post_meta( $slider_id, '_wc_ps_loop', true ) === '1',
+			'speed'                    => ! empty( $speed ) ? $speed : 3000,
+			'custom_css'               => ! empty( $custom_css ) ? $custom_css : '',
+			'show_title'               => $show_title === '1',
+			'show_price'               => $show_price === '1',
+			'show_description'         => $show_description === '1',
+			'show_button'              => $show_button === '1',
+			'show_image'               => $show_image === '1',
+			'show_rating'              => $show_rating === '1',
+			'button_text'              => ! empty( $button_text ) ? $button_text : __( 'View Product', 'woocommerce-product-slider' ),
+			'slider_heading'           => ! empty( $slider_heading ) ? $slider_heading : '',
+			'heading_font_size'        => ! empty( $heading_font_size ) ? absint( $heading_font_size ) : 24,
+			'heading_alignment'        => ! empty( $heading_alignment ) ? $heading_alignment : 'left',
+			'heading_typography'       => ! empty( $heading_typography ) ? $heading_typography : 'default',
+			'heading_color'            => ! empty( $heading_color ) ? $heading_color : '',
+			'clickable_image'          => $clickable_image === '1',
 		);
 	}
 
@@ -301,7 +301,7 @@ class WC_Product_Slider_Shortcode {
 			esc_attr( $border_radius )
 		);
 
-		// Pagination bullets color
+		// Pagination bullets color.
 		if ( ! empty( $primary_color ) ) {
 			printf(
 				'<style type="text/css">
@@ -314,7 +314,7 @@ class WC_Product_Slider_Shortcode {
 			);
 		}
 
-		// Heading Styles
+		// Heading Styles.
 		$heading_style = '';
 		if ( ! empty( $config['heading_font_size'] ) ) {
 			$heading_style .= 'font-size: ' . esc_attr( $config['heading_font_size'] ) . 'px;';
@@ -341,7 +341,7 @@ class WC_Product_Slider_Shortcode {
 				</style>',
 				esc_attr( $slider_id ),
 				esc_attr( $heading_color ),
-				$heading_style // Injected styles
+				wp_kses_post( $heading_style ) // Injected styles - already escaped via esc_attr() above.
 			);
 		}
 
@@ -370,7 +370,7 @@ class WC_Product_Slider_Shortcode {
 		}
 
 		if ( ! empty( $config['nav_arrow_bg_color'] ) || $config['nav_arrow_gradient'] ) {
-			$bg_style = '';
+			$bg_style       = '';
 			$hover_bg_style = '';
 
 			if ( $config['nav_arrow_gradient'] ) {
@@ -688,20 +688,20 @@ class WC_Product_Slider_Shortcode {
 		}
 
 		$swiper_config = array(
-			'slidesPerView' => 1,
-			'spaceBetween'  => $slide_gap,
-			'speed'         => 800, // Comfy: slower, smoother transitions.
+			'slidesPerView'  => 1,
+			'spaceBetween'   => $slide_gap,
+			'speed'          => 800, // Comfy: slower, smoother transitions.
 			'centeredSlides' => false, // Ensure slides start from the left
-			'loop'          => $config['loop'],
-			'autoplay'      => $config['autoplay'] ? array(
+			'loop'           => $config['loop'],
+			'autoplay'       => $config['autoplay'] ? array(
 				'delay'                => $config['speed'],
 				'disableOnInteraction' => false,
 			) : false,
-			'navigation'    => $config['show_arrows'] ? array(
+			'navigation'     => $config['show_arrows'] ? array(
 				'nextEl' => '.swiper-button-next',
 				'prevEl' => '.swiper-button-prev',
 			) : false,
-			'breakpoints'   => array(
+			'breakpoints'    => array(
 				640  => array(
 					'slidesPerView' => 2,
 					'spaceBetween'  => $slide_gap,
