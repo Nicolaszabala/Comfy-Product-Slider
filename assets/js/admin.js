@@ -9,8 +9,15 @@
 
 		// Initialize WordPress Color Picker with Alpha
 		if (typeof $.fn.wpColorPicker === 'function') {
-			$('.wc-ps-color-picker').wpColorPicker({
-				palettes: ['#4A403A', '#D4A373', '#ffffff', '#000000', '#2271b1', 'rgba(255,255,255,0)']
+			$('.wc-ps-color-picker').each(function() {
+				var $input = $(this);
+
+				// Ensure alpha-enabled is read as boolean
+				$input.data('alphaEnabled', true);
+
+				$input.wpColorPicker({
+					palettes: ['#4A403A', '#D4A373', '#ffffff', '#000000', '#2271b1', 'rgba(255,255,255,0)']
+				});
 			});
 		}
 

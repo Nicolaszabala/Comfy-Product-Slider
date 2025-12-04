@@ -139,13 +139,13 @@ class WC_Product_Slider_Admin {
 		wp_enqueue_script( 'code-editor' );
 		wp_enqueue_script( 'csslint' );
 
-		// Enqueue custom admin script.
+		// Enqueue custom admin script in header to ensure DOM is ready.
 		wp_enqueue_script(
 			'wc-product-slider-admin',
 			plugin_dir_url( dirname( __DIR__ ) ) . 'assets/js/admin.js',
 			array( 'jquery', 'select2', 'wp-color-picker-alpha', 'code-editor', 'media-upload', 'media-views' ),
 			$this->version,
-			true
+			false
 		);
 
 		// Localize script.
