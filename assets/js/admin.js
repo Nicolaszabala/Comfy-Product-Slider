@@ -11,17 +11,39 @@
 		if (typeof $.fn.wpColorPicker === 'function') {
 			$('.wc-ps-color-picker').each(function() {
 				var $input = $(this);
+				var initialValue = $input.val();
 
-				// Ensure alpha-enabled is read as boolean
+				// Forzar data attribute como boolean
 				$input.data('alphaEnabled', true);
 
+				// Initialize color picker
 				$input.wpColorPicker({
 					palettes: ['#4A403A', '#D4A373', '#ffffff', '#000000', '#2271b1', 'rgba(255,255,255,0)']
 				});
+
+				// Wait for wp-color-picker-alpha to finish applying its styles
+				// then override them with our fixes using native setProperty for !important
+				setTimeout(function() {
+					var $container = $input.closest('.wp-picker-container');
+					var $colorAlpha = $container.find('.color-alpha');
+
+					// Force the span to cover the entire button
+					if ($colorAlpha.length && $colorAlpha[0]) {
+						var el = $colorAlpha[0];
+						el.style.setProperty('width', '100%', 'important');
+						el.style.setProperty('height', '100%', 'important');
+						el.style.setProperty('left', '0', 'important');
+						el.style.setProperty('border-radius', '3px', 'important');
+
+						// Apply initial color if exists
+						if (initialValue && initialValue !== '') {
+							el.style.setProperty('background-color', initialValue, 'important');
+						}
+					}
+				}, 100);
 			});
 		}
 
-		// Initialize Select2 with AJAX
 		// Initialize Select2 with AJAX
 		if (typeof $.fn.select2 !== 'undefined' && $('#wc_ps_products').length) {
 			$('#wc_ps_products').select2({

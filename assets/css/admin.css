@@ -850,3 +850,22 @@ hr {
     align-items: center;
     gap: 8px;
 }
+
+/* ===== Color Picker Fix ===== */
+/* Forzar posición correcta del span y quitar cuadros */
+.wp-picker-container .wp-color-result .color-alpha {
+    left: -8px !important;
+    right: auto !important;
+    width: 90% !important;
+    height: 100% !important;
+    border-radius: 3px !important;
+    background-image: none !important;
+}
+
+/* Quitar cuadros del botón principal también */
+.wp-picker-container .wp-color-result {
+    background-image: none !important;
+    background-color: #f0f0f1 !important;
+    left: -8px !important;
+
+}

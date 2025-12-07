@@ -147,6 +147,43 @@ class WC_Product_Slider_Sanitizer {
 	}
 
 	/**
+	 * Sanitize color (hex or rgba).
+	 *
+	 * Validates hex (#fff, #ffffff) or rgba (rgba(255,255,255,0.5)) color formats.
+	 * Returns default color if invalid.
+	 *
+	 * @since  1.2.5
+	 * @param  string $color Input color.
+	 * @param  string $default_color Default color if invalid.
+	 * @return string Sanitized color.
+	 */
+	public static function sanitize_color( $color, $default_color = '#ffffff' ) {
+		// Remove whitespace.
+		$color = trim( $color );
+
+		// Check if it's a valid hex color.
+		if ( preg_match( '/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color ) ) {
+			return $color;
+		}
+
+		// Check if it's a valid rgba color.
+		// Pattern: rgba(0-255, 0-255, 0-255, 0-1)
+		if ( preg_match( '/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([01]?\.?\d*))?\s*\)$/i', $color, $matches ) ) {
+			$r = intval( $matches[1] );
+			$g = intval( $matches[2] );
+			$b = intval( $matches[3] );
+			$a = isset( $matches[4] ) ? floatval( $matches[4] ) : 1;
+
+			// Validate ranges.
+			if ( $r >= 0 && $r <= 255 && $g >= 0 && $g <= 255 && $b >= 0 && $b <= 255 && $a >= 0 && $a <= 1 ) {
+				return "rgba($r, $g, $b, $a)";
+			}
+		}
+
+		return $default_color;
+	}
+
+	/**
 	 * Sanitize array of integers.
 	 *
 	 * Filters array to only positive integers.

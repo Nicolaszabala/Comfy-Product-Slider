@@ -123,6 +123,9 @@ class WC_Product_Slider_Shortcode {
 		$secondary_color   = get_post_meta( $slider_id, '_wc_ps_secondary_color', true );
 		$button_color      = get_post_meta( $slider_id, '_wc_ps_button_color', true );
 		$button_text_color = get_post_meta( $slider_id, '_wc_ps_button_text_color', true );
+		$button_font_size  = get_post_meta( $slider_id, '_wc_ps_button_font_size', true );
+		$button_padding    = get_post_meta( $slider_id, '_wc_ps_button_padding', true );
+		$slider_max_width  = get_post_meta( $slider_id, '_wc_ps_slider_max_width', true );
 		$speed             = absint( get_post_meta( $slider_id, '_wc_ps_speed', true ) );
 		$custom_css        = get_post_meta( $slider_id, '_wc_ps_custom_css', true );
 		$border_radius     = get_post_meta( $slider_id, '_wc_ps_border_radius', true );
@@ -170,6 +173,9 @@ class WC_Product_Slider_Shortcode {
 			'secondary_color'          => ! empty( $secondary_color ) ? $secondary_color : '#ffffff',
 			'button_color'             => ! empty( $button_color ) ? $button_color : '#0073aa',
 			'button_text_color'        => ! empty( $button_text_color ) ? $button_text_color : '#ffffff',
+			'button_font_size'         => ! empty( $button_font_size ) ? absint( $button_font_size ) : 16,
+			'button_padding'           => ! empty( $button_padding ) ? absint( $button_padding ) : 12,
+			'slider_max_width'         => ! empty( $slider_max_width ) ? absint( $slider_max_width ) : 1200,
 			'border_radius'            => ! empty( $border_radius ) ? absint( $border_radius ) : 8,
 			'slide_gap'                => ! empty( $slide_gap ) ? absint( $slide_gap ) : 20,
 			'navigation_type'          => ! empty( $navigation_type ) ? $navigation_type : 'dots',
@@ -273,17 +279,27 @@ class WC_Product_Slider_Shortcode {
 		// Add color and design customization inline styles.
 		$button_color       = ! empty( $config['button_color'] ) ? $config['button_color'] : '#0073aa';
 		$button_text_color  = ! empty( $config['button_text_color'] ) ? $config['button_text_color'] : '#ffffff';
+		$button_font_size   = ! empty( $config['button_font_size'] ) ? absint( $config['button_font_size'] ) : 16;
+		$button_padding     = ! empty( $config['button_padding'] ) ? absint( $config['button_padding'] ) : 12;
+		$slider_max_width   = ! empty( $config['slider_max_width'] ) ? absint( $config['slider_max_width'] ) : 1200;
 		$button_hover_color = $this->darken_color( $button_color, 15 );
 		$primary_color      = ! empty( $config['primary_color'] ) ? $config['primary_color'] : '#000000';
 		$border_radius      = isset( $config['border_radius'] ) ? absint( $config['border_radius'] ) : 8;
 
 		printf(
 			'<style type="text/css">
+				.wc-ps-slider-%1$s {
+					max-width: %8$spx !important;
+					margin-left: auto !important;
+					margin-right: auto !important;
+				}
 				.wc-ps-slider-%1$s .wc-ps-product-actions .button,
 				.wc-ps-slider-%1$s .wc-ps-view-product {
 					background-color: %2$s !important;
 					border-color: %2$s !important;
 					color: %3$s !important;
+					font-size: %6$spx !important;
+					padding: %7$spx %9$spx !important;
 				}
 				.wc-ps-slider-%1$s .wc-ps-product-actions .button:hover,
 				.wc-ps-slider-%1$s .wc-ps-view-product:hover {
@@ -298,7 +314,11 @@ class WC_Product_Slider_Shortcode {
 			esc_attr( $button_color ),
 			esc_attr( $button_text_color ),
 			esc_attr( $button_hover_color ),
-			esc_attr( $border_radius )
+			esc_attr( $border_radius ),
+			esc_attr( $button_font_size ),
+			esc_attr( $button_padding ),
+			esc_attr( $slider_max_width ),
+			esc_attr( $button_padding * 1.5 ) // Horizontal padding 1.5x vertical
 		);
 
 		// Pagination bullets color.

@@ -1,6 +1,6 @@
 <?php
 /**
- * Comfy Slider for WooCommerce
+ * Comfy Product Slider Plugin
  *
  * @package           WC_Product_Slider
  * @author            Nicolas Zabala
@@ -8,10 +8,10 @@
  * @license           GPL-2.0-or-later
  *
  * @wordpress-plugin
- * Plugin Name:       Comfy Slider for WooCommerce
+ * Plugin Name:       Comfy Product Slider Plugin
  * Plugin URI:        https://github.com/Nicolaszabala/comfy-slider
  * Description:       A cozy, café-themed WooCommerce product slider with smooth animations and advanced customization. Create beautiful, warm product showcases with intuitive visual controls.
- * Version:           1.2.4
+ * Version:           1.2.9
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Nicolas Zabala
@@ -33,7 +33,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Current plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
  */
-define( 'WC_PRODUCT_SLIDER_VERSION', '1.2.4' );
+define( 'WC_PRODUCT_SLIDER_VERSION', '1.2.9' );
 
 /**
  * Plugin directory path.
@@ -143,7 +143,7 @@ function wc_product_slider_woocommerce_missing_notice() {
 			echo wp_kses_post(
 				sprintf(
 					/* translators: %s: WooCommerce plugin name */
-					__( '<strong>Comfy Slider for WooCommerce</strong> requires %s to be installed and activated.', 'woocommerce-product-slider' ),
+					__( '<strong>Comfy Product Slider Plugin</strong> requires %s to be installed and activated.', 'woocommerce-product-slider' ),
 					'<a href="https://wordpress.org/plugins/woocommerce/" target="_blank">WooCommerce</a>'
 				)
 			);

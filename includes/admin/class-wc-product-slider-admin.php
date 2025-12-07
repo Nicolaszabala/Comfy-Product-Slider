@@ -11,6 +11,8 @@
 
 namespace WC_Product_Slider\Admin;
 
+use WC_Product_Slider\Core\WC_Product_Slider_Sanitizer;
+
 /**
  * Admin class
  *
@@ -123,14 +125,14 @@ class WC_Product_Slider_Admin {
 		// Enqueue WordPress Color Picker with Alpha support.
 		// Explicitly enqueue iris first to ensure proper load order.
 		wp_enqueue_script( 'iris' );
-		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_script( 'wp-color-picker' );
 
-		// Enqueue wp-color-picker-alpha for transparency support.
+// Enqueue wp-color-picker-alpha for transparency support.
+		// Requires jquery-ui-slider for alpha slider control.
 		wp_enqueue_script(
 			'wp-color-picker-alpha',
 			plugin_dir_url( dirname( __DIR__ ) ) . 'assets/js/wp-color-picker-alpha.min.js',
-			array( 'jquery', 'wp-color-picker' ),
+			array( 'jquery', 'jquery-ui-slider', 'wp-color-picker' ),
 			'3.0.4',
 			false
 		);
@@ -489,19 +491,21 @@ class WC_Product_Slider_Admin {
 			'custom_slides'            => array(), // Placeholder for future custom slides support in preview.
 
 			// Design.
-			'primary_color'            => isset( $form_data['wc_ps_primary_color'] ) ? sanitize_hex_color( $form_data['wc_ps_primary_color'] ) : '#4A403A',
-			'secondary_color'          => isset( $form_data['wc_ps_secondary_color'] ) ? sanitize_hex_color( $form_data['wc_ps_secondary_color'] ) : '#D4A373',
-			'button_color'             => isset( $form_data['wc_ps_button_color'] ) ? sanitize_hex_color( $form_data['wc_ps_button_color'] ) : '#4A403A',
-			'button_text_color'        => isset( $form_data['wc_ps_button_text_color'] ) ? sanitize_hex_color( $form_data['wc_ps_button_text_color'] ) : '#ffffff',
+			'primary_color'            => isset( $form_data['wc_ps_primary_color'] ) ? WC_Product_Slider_Sanitizer::sanitize_color( $form_data['wc_ps_primary_color'] ) : '#4A403A',
+			'secondary_color'          => isset( $form_data['wc_ps_secondary_color'] ) ? WC_Product_Slider_Sanitizer::sanitize_color( $form_data['wc_ps_secondary_color'] ) : '#D4A373',
+			'button_color'             => isset( $form_data['wc_ps_button_color'] ) ? WC_Product_Slider_Sanitizer::sanitize_color( $form_data['wc_ps_button_color'] ) : '#4A403A',
+			'button_text_color'        => isset( $form_data['wc_ps_button_text_color'] ) ? WC_Product_Slider_Sanitizer::sanitize_color( $form_data['wc_ps_button_text_color'] ) : '#ffffff',
+			'button_font_size'         => isset( $form_data['wc_ps_button_font_size'] ) ? absint( $form_data['wc_ps_button_font_size'] ) : 16,
+			'button_padding'           => isset( $form_data['wc_ps_button_padding'] ) ? absint( $form_data['wc_ps_button_padding'] ) : 12,
+			'slider_max_width'         => isset( $form_data['wc_ps_slider_max_width'] ) ? absint( $form_data['wc_ps_slider_max_width'] ) : 1200,
 			'border_radius'            => isset( $form_data['wc_ps_border_radius'] ) ? absint( $form_data['wc_ps_border_radius'] ) : 8,
 			'slide_gap'                => isset( $form_data['wc_ps_slide_gap'] ) ? absint( $form_data['wc_ps_slide_gap'] ) : 20,
 
 			// Navigation.
-			'nav_arrow_color'          => isset( $form_data['wc_ps_nav_arrow_color'] ) ? sanitize_hex_color( $form_data['wc_ps_nav_arrow_color'] ) : '',
-			'nav_arrow_bg_color'       => isset( $form_data['wc_ps_nav_arrow_bg_color'] ) ? sanitize_hex_color( $form_data['wc_ps_nav_arrow_bg_color'] ) : '',
-			'nav_arrow_gradient'       => isset( $form_data['wc_ps_nav_arrow_gradient'] ) && '1' === $form_data['wc_ps_nav_arrow_gradient'],
+			'nav_arrow_color'          => isset( $form_data['wc_ps_nav_arrow_color'] ) ? WC_Product_Slider_Sanitizer::sanitize_color( $form_data['wc_ps_nav_arrow_color'] ) : '',
+			'nav_arrow_bg_color'       => isset( $form_data['wc_ps_nav_arrow_bg_color'] ) ? WC_Product_Slider_Sanitizer::sanitize_color( $form_data['wc_ps_nav_arrow_bg_color'] ) : '',
 			'nav_arrow_size'           => isset( $form_data['wc_ps_nav_arrow_size'] ) ? absint( $form_data['wc_ps_nav_arrow_size'] ) : 40,
-			'nav_progressbar_color'    => isset( $form_data['wc_ps_nav_progressbar_color'] ) ? sanitize_hex_color( $form_data['wc_ps_nav_progressbar_color'] ) : '',
+			'nav_progressbar_color'    => isset( $form_data['wc_ps_nav_progressbar_color'] ) ? WC_Product_Slider_Sanitizer::sanitize_color( $form_data['wc_ps_nav_progressbar_color'] ) : '',
 			'nav_progressbar_height'   => isset( $form_data['wc_ps_nav_progressbar_height'] ) ? absint( $form_data['wc_ps_nav_progressbar_height'] ) : 4,
 			'nav_progressbar_position' => isset( $form_data['wc_ps_nav_progressbar_position'] ) ? sanitize_text_field( $form_data['wc_ps_nav_progressbar_position'] ) : 'bottom',
 
@@ -526,7 +530,7 @@ class WC_Product_Slider_Admin {
 			'heading_font_size'        => isset( $form_data['wc_ps_heading_font_size'] ) ? absint( $form_data['wc_ps_heading_font_size'] ) : 24,
 			'heading_alignment'        => isset( $form_data['wc_ps_heading_alignment'] ) ? sanitize_text_field( $form_data['wc_ps_heading_alignment'] ) : 'left',
 			'heading_typography'       => isset( $form_data['wc_ps_heading_typography'] ) ? sanitize_text_field( $form_data['wc_ps_heading_typography'] ) : 'default',
-			'heading_color'            => isset( $form_data['wc_ps_heading_color'] ) ? sanitize_hex_color( $form_data['wc_ps_heading_color'] ) : '',
+			'heading_color'            => isset( $form_data['wc_ps_heading_color'] ) ? WC_Product_Slider_Sanitizer::sanitize_color( $form_data['wc_ps_heading_color'] ) : '',
 			'clickable_image'          => isset( $form_data['wc_ps_clickable_image'] ) && '1' === $form_data['wc_ps_clickable_image'],
 
 			// Custom CSS.
@@ -627,12 +631,27 @@ class WC_Product_Slider_Admin {
 				<th><label for="wc_ps_button_text_color"><?php esc_html_e( 'Button Text:', 'woocommerce-product-slider' ); ?></label></th>
 				<td><input type="text" name="wc_ps_button_text_color" id="wc_ps_button_text_color" value="<?php echo esc_attr( $button_text_color ); ?>" class="wc-ps-color-picker" data-alpha-enabled="true" data-type="full" /></td>
 			</tr>
+			<tr>
+				<th><label for="wc_ps_button_font_size"><?php esc_html_e( 'Button Font Size (px):', 'woocommerce-product-slider' ); ?></label></th>
+				<td><input type="number" name="wc_ps_button_font_size" id="wc_ps_button_font_size" value="<?php echo esc_attr( get_post_meta( $post->ID, '_wc_ps_button_font_size', true ) ? : 16 ); ?>" min="10" max="30" /></td>
+			</tr>
+			<tr>
+				<th><label for="wc_ps_button_padding"><?php esc_html_e( 'Button Padding (px):', 'woocommerce-product-slider' ); ?></label></th>
+				<td><input type="number" name="wc_ps_button_padding" id="wc_ps_button_padding" value="<?php echo esc_attr( get_post_meta( $post->ID, '_wc_ps_button_padding', true ) ? : 12 ); ?>" min="5" max="30" /></td>
+			</tr>
 		</table>
 
 		<hr>
 
 		<h4><?php esc_html_e( 'Layout', 'woocommerce-product-slider' ); ?></h4>
 		<table class="form-table">
+			<tr>
+				<th><label for="wc_ps_slider_max_width"><?php esc_html_e( 'Slider Max Width (px):', 'woocommerce-product-slider' ); ?></label></th>
+				<td>
+					<input type="number" name="wc_ps_slider_max_width" id="wc_ps_slider_max_width" value="<?php echo esc_attr( get_post_meta( $post->ID, '_wc_ps_slider_max_width', true ) ? : 1200 ); ?>" min="300" max="2000" />
+					<p class="description"><?php esc_html_e( 'Maximum width of the slider container. Leave empty for full width.', 'woocommerce-product-slider' ); ?></p>
+				</td>
+			</tr>
 			<tr>
 				<th><label for="wc_ps_border_radius"><?php esc_html_e( 'Border Radius (px):', 'woocommerce-product-slider' ); ?></label></th>
 				<td><input type="number" name="wc_ps_border_radius" id="wc_ps_border_radius" value="<?php echo esc_attr( $border_radius ); ?>" min="0" max="50" /></td>
@@ -655,11 +674,6 @@ class WC_Product_Slider_Admin {
 				<th><label for="wc_ps_nav_arrow_bg_color"><?php esc_html_e( 'Arrow Background Color:', 'woocommerce-product-slider' ); ?></label></th>
 				<td>
 					<input type="text" name="wc_ps_nav_arrow_bg_color" id="wc_ps_nav_arrow_bg_color" value="<?php echo esc_attr( $nav_arrow_bg_color ); ?>" class="wc-ps-color-picker" data-alpha-enabled="true" data-type="full" />
-					<br>
-					<label style="margin-top: 5px; display: inline-block;">
-						<input type="checkbox" name="wc_ps_nav_arrow_gradient" value="1" <?php checked( get_post_meta( $post->ID, '_wc_ps_nav_arrow_gradient', true ), '1' ); ?> />
-						<?php esc_html_e( 'Use Gradient (Primary to Secondary)', 'woocommerce-product-slider' ); ?>
-					</label>
 				</td>
 			</tr>
 			<tr>
@@ -1288,23 +1302,44 @@ class WC_Product_Slider_Admin {
 			wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['wc_product_slider_design_nonce'] ) ), 'wc_product_slider_save_design' ) ) {
 
 			if ( isset( $_POST['wc_ps_primary_color'] ) ) {
-				$primary_color = sanitize_hex_color( wp_unslash( $_POST['wc_ps_primary_color'] ) );
+				$primary_color = WC_Product_Slider_Sanitizer::sanitize_color( wp_unslash( $_POST['wc_ps_primary_color'] ) );
 				update_post_meta( $post_id, '_wc_ps_primary_color', $primary_color );
 			}
 
 			if ( isset( $_POST['wc_ps_secondary_color'] ) ) {
-				$secondary_color = sanitize_hex_color( wp_unslash( $_POST['wc_ps_secondary_color'] ) );
+				$secondary_color = WC_Product_Slider_Sanitizer::sanitize_color( wp_unslash( $_POST['wc_ps_secondary_color'] ) );
 				update_post_meta( $post_id, '_wc_ps_secondary_color', $secondary_color );
 			}
 
 			if ( isset( $_POST['wc_ps_button_color'] ) ) {
-				$button_color = sanitize_hex_color( wp_unslash( $_POST['wc_ps_button_color'] ) );
+				$button_color = WC_Product_Slider_Sanitizer::sanitize_color( wp_unslash( $_POST['wc_ps_button_color'] ) );
 				update_post_meta( $post_id, '_wc_ps_button_color', $button_color );
 			}
 
 			if ( isset( $_POST['wc_ps_button_text_color'] ) ) {
-				$button_text_color = sanitize_hex_color( wp_unslash( $_POST['wc_ps_button_text_color'] ) );
+				$button_text_color = WC_Product_Slider_Sanitizer::sanitize_color( wp_unslash( $_POST['wc_ps_button_text_color'] ) );
 				update_post_meta( $post_id, '_wc_ps_button_text_color', $button_text_color );
+			}
+
+			if ( isset( $_POST['wc_ps_button_font_size'] ) ) {
+				$button_font_size = absint( $_POST['wc_ps_button_font_size'] );
+				if ( $button_font_size >= 10 && $button_font_size <= 30 ) {
+					update_post_meta( $post_id, '_wc_ps_button_font_size', $button_font_size );
+				}
+			}
+
+			if ( isset( $_POST['wc_ps_button_padding'] ) ) {
+				$button_padding = absint( $_POST['wc_ps_button_padding'] );
+				if ( $button_padding >= 5 && $button_padding <= 30 ) {
+					update_post_meta( $post_id, '_wc_ps_button_padding', $button_padding );
+				}
+			}
+
+			if ( isset( $_POST['wc_ps_slider_max_width'] ) ) {
+				$slider_max_width = absint( $_POST['wc_ps_slider_max_width'] );
+				if ( $slider_max_width >= 300 && $slider_max_width <= 2000 ) {
+					update_post_meta( $post_id, '_wc_ps_slider_max_width', $slider_max_width );
+				}
 			}
 
 			if ( isset( $_POST['wc_ps_border_radius'] ) ) {
@@ -1319,12 +1354,12 @@ class WC_Product_Slider_Admin {
 
 			// Save Navigation Customization.
 			if ( isset( $_POST['wc_ps_nav_arrow_color'] ) ) {
-				$nav_arrow_color = sanitize_hex_color( wp_unslash( $_POST['wc_ps_nav_arrow_color'] ) );
+				$nav_arrow_color = WC_Product_Slider_Sanitizer::sanitize_color( wp_unslash( $_POST['wc_ps_nav_arrow_color'] ) );
 				update_post_meta( $post_id, '_wc_ps_nav_arrow_color', $nav_arrow_color );
 			}
 
 			if ( isset( $_POST['wc_ps_nav_arrow_bg_color'] ) ) {
-				$nav_arrow_bg_color = sanitize_hex_color( wp_unslash( $_POST['wc_ps_nav_arrow_bg_color'] ) );
+				$nav_arrow_bg_color = WC_Product_Slider_Sanitizer::sanitize_color( wp_unslash( $_POST['wc_ps_nav_arrow_bg_color'] ) );
 				update_post_meta( $post_id, '_wc_ps_nav_arrow_bg_color', $nav_arrow_bg_color );
 			}
 
@@ -1335,11 +1370,8 @@ class WC_Product_Slider_Admin {
 				}
 			}
 
-			// Save arrow gradient checkbox.
-			$nav_arrow_gradient = isset( $_POST['wc_ps_nav_arrow_gradient'] ) ? '1' : '0';
-			update_post_meta( $post_id, '_wc_ps_nav_arrow_gradient', $nav_arrow_gradient );
 			if ( isset( $_POST['wc_ps_nav_progressbar_color'] ) ) {
-				$nav_progressbar_color = sanitize_hex_color( wp_unslash( $_POST['wc_ps_nav_progressbar_color'] ) );
+				$nav_progressbar_color = WC_Product_Slider_Sanitizer::sanitize_color( wp_unslash( $_POST['wc_ps_nav_progressbar_color'] ) );
 				update_post_meta( $post_id, '_wc_ps_nav_progressbar_color', $nav_progressbar_color );
 			}
 
@@ -1402,7 +1434,7 @@ class WC_Product_Slider_Admin {
 			}
 
 			if ( isset( $_POST['wc_ps_heading_color'] ) ) {
-				$heading_color = sanitize_hex_color( wp_unslash( $_POST['wc_ps_heading_color'] ) );
+				$heading_color = WC_Product_Slider_Sanitizer::sanitize_color( wp_unslash( $_POST['wc_ps_heading_color'] ) );
 				update_post_meta( $post_id, '_wc_ps_heading_color', $heading_color );
 			}
 
